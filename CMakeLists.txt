@@ -12,8 +12,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(fastllmcpp src/main.cpp)
 
 # Optionally include additional libraries or directories
-# target_include_directories(MyProject PRIVATE include)
+# target_include_directories(fastllmcpp PRIVATE include)
+
+# Add the llama.cpp library
+add_subdirectory(libs/llama.cpp)
+
+# Include llama.cpp headers in your project
+include_directories(libs/llama.cpp)
 
 # Link additional libraries if needed
-# target_link_libraries(MyProject PRIVATE some_library)
-
+target_link_libraries(fastllmcpp PRIVATE llama)

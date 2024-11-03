@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
-// #include "llama.h"
+#include "llama.h"
 #include "protos/llm_request.pb.h"
 
 /*
