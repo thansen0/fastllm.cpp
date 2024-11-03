@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
-#include "llama.h"
+// #include "llama.h"
 #include "protos/llm_request.pb.h"
 
+/*
 int TestLlama() {
         // Initialize llama parameters
     llama_init_params params = llama_init_params_default();
@@ -44,10 +45,10 @@ int TestLlama() {
     // Free resources
     llama_free(ctx);
     return 0;
-}
+} */
 
 int main() {
     printf("Hello World!\n");
 
-    TestLlama();
+//    TestLlama();
 }
