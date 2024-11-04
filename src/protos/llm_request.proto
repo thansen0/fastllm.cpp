@@ -3,7 +3,7 @@ syntax = "proto3";
 package llm_request;
 
 // saves in same file as /protos, new name creates new folder for compiled code
-option go_package = "/";
+// option go_package = "/";
 
 service AskLLMQuestion {
     rpc PromptLLM (LLMInit) returns (LLMInference) {}

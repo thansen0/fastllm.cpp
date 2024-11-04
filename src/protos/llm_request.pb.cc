@@ -86,8 +86,7 @@ const char descriptor_table_protodef_llm_5frequest_2eproto[] PROTOBUF_SECTION_VA
   "nit\022\016\n\006apiKey\030\001 \001(\t\022\016\n\006prompt\030\002 \001(\t\"\036\n\014L"
   "LMInference\022\016\n\006answer\030\001 \001(\t2P\n\016AskLLMQue"
   "stion\022>\n\tPromptLLM\022\024.llm_request.LLMInit"
-  "\032\031.llm_request.LLMInference\"\000B\003Z\001/b\006prot"
-  "o3"
+  "\032\031.llm_request.LLMInference\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_llm_5frequest_2eproto_deps[1] = {
 };
@@ -97,7 +96,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_llm
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_llm_5frequest_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_llm_5frequest_2eproto = {
-  false, false, descriptor_table_protodef_llm_5frequest_2eproto, "llm_request.proto", 202,
+  false, false, descriptor_table_protodef_llm_5frequest_2eproto, "llm_request.proto", 197,
   &descriptor_table_llm_5frequest_2eproto_once, descriptor_table_llm_5frequest_2eproto_sccs, descriptor_table_llm_5frequest_2eproto_deps, 2, 0,
   schemas, file_default_instances, TableStruct_llm_5frequest_2eproto::offsets,
   file_level_metadata_llm_5frequest_2eproto, 2, file_level_enum_descriptors_llm_5frequest_2eproto, file_level_service_descriptors_llm_5frequest_2eproto,
