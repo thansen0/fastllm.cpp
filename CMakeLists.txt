@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add the executable
 add_executable(fastllmcpp src/main.cpp)
+add_executable(testllmcpp src/test-client.cpp)
 
 # Find Protobuf
 #find_package(gRPC REQUIRED)
@@ -27,17 +28,17 @@ set(PROTO_HDRS src/protos/llm_request.pb.h src/protos/llm_request.grpc.pb.h)
 
 # Add the generated protobuf files to the executable
 target_sources(fastllmcpp PRIVATE ${PROTO_SRCS} ${PROTO_HDRS})
+target_sources(testllmcpp PRIVATE ${PROTO_SRCS} ${PROTO_HDRS})
 
 # Optionally include additional libraries or directories
 # target_include_directories(fastllmcpp PRIVATE include)
 
-# Add the llama.cpp library
+# Add the llama.cpp library and headers
 add_subdirectory(libs/llama.cpp)
-
-# Include llama.cpp headers in your project
 include_directories(libs/llama.cpp)
 
 # Link additional libraries if needed
 # target_link_libraries(fastllmcpp PRIVATE llama)
 # target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} ${gRPC_LIBRARIES} grpc++ pthread)
 target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ pthread)
+target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ pthread)

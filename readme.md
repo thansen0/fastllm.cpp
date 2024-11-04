@@ -2,7 +2,7 @@
 
 ## Build FastLLM.cpp
 
-I *highly* recommend building this using ninja. To do this run 
+I *highly* recommend building this using ninja. To install dependencies and build the project, run
 
 ```
 mkdir build
