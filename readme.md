@@ -18,5 +18,5 @@ ninja               # cmake --build .
 These can be compiled as so:
 
 ```
-protoc -I=./protos --cpp_out=./protos ./protos/llm_request.proto
+protoc -I=./protos --cpp_out=./protos --grpc_out=./protos --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` ./protos/llm_request.proto
 ```
