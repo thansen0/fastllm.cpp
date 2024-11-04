@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include "llama.h"
@@ -6,6 +7,8 @@
 #include <memory>
 #include <grpcpp/grpcpp.h>
 #include "llm_request.grpc.pb.h"
+
+using namespace std;
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -16,55 +19,51 @@ using llm_request::LLMInit;
 using llm_request::LLMInference;
 
 
-/*
-int TestLlama() {
-        // Initialize llama parameters
-    llama_init_params params = llama_init_params_default();
-    params.path_model = "Llama-3.2-3B-Instruct-uncensored-GGUF/Llama-3.2-3B-Instruct-uncensored.Q2_K.gguf";  // Path to your model
+class WriteRequests {
+private:
+    std::ofstream logFile;
 
-    // Initialize the model context
-    llama_context *ctx = llama_init_from_file(params.path_model.c_str(), params);
-    if (!ctx) {
-        std::cerr << "Failed to load the model." << std::endl;
-        return 1;
-    }
-
-    // Define the prompt
-    const std::string prompt = "The future of AI is";
-    llama_token tokens[128];
-    int n_tokens = llama_tokenize(ctx, prompt.c_str(), tokens, 128, true);
-
-    // Evaluate the model with the prompt
-    if (llama_eval(ctx, tokens, n_tokens, 0, 4)) {
-        std::cerr << "Failed to evaluate model." << std::endl;
-        llama_free(ctx);
-        return 1;
-    }
-
-    // Generate text based on the prompt
-    std::cout << prompt;
-    for (int i = 0; i < 50; i++) {  // Generate 50 tokens
-        llama_token new_token = llama_sample_top_p_top_k(ctx, NULL, 0.9, 40);
-        std::cout << llama_token_to_str(ctx, new_token);
-        
-        // Feed the new token back into the model
-        if (llama_eval(ctx, &new_token, 1, i + n_tokens, 4)) {
-            std::cerr << "Failed to evaluate model." << std::endl;
-            break;
+public:
+    // Constructor: Initializes and opens the file
+    WriteRequests(const std::string& filePath) {
+        logFile.open(filePath);
+        if (!logFile.is_open()) {
+            throw std::ios_base::failure("Failed to open log file.");
         }
     }
 
-    // Free resources
-    llama_free(ctx);
-    return 0;
-}
-*/
+    // Destructor: Closes the file automatically on object destruction
+    ~WriteRequests() {
+        if (logFile.is_open()) {
+            printf("CLOSING logfile");
+            logFile.close();
+        }
+    }
+
+    // Method to write a log entry in CSV format
+    void writeLLMRequest(const std::string& prompt, const std::string& result, const std::string& user_uuid) {
+        if (logFile.is_open()) {
+            logFile << "\"" << prompt << "\",\"" << result << "," << user_uuid << "\"\n";
+            logFile.flush();
+        } else {
+            std::cerr << "Log file is not open for writing.\n";
+        }
+    }
+};
 
 // Service implementation
 class AskLLMQuestionServiceImpl final : public AskLLMQuestion::Service {
+private:
+    WriteRequests *wr;
+
 public:
+    AskLLMQuestionServiceImpl(WriteRequests *wr_ptr) {
+        wr = wr_ptr;
+    }
+
     // Implementation of the PromptLLM RPC
     Status PromptLLM(ServerContext* context, const LLMInit* request, LLMInference* reply) override {
+
         // Access the fields in the request
         std::string api_key = request->apikey();
         std::string prompt = request->prompt();
@@ -75,18 +74,31 @@ public:
 
         // Process and create a response
         // In a real scenario, replace this with the logic to generate an answer.
-        std::string answer = "This is a placeholder answer.";
+        std::string answer = "This is a placeholder answer";
 
         // Set the response
         reply->set_answer(answer);
+
+        try{
+            wr->writeLLMRequest(prompt, answer, api_key);
+        } catch (const std::exception& e) {
+            std::cerr << "Exception caught: " << e.what() << std::endl;
+        }
+
+
 
         return Status::OK;
     }
 };
 
 void RunServer() {
+    // TODO read in config information
+
+    // create logger object
+    WriteRequests *wr = new WriteRequests("/home/thomas/Code/fastllmcpp/fastllmcpp/logs/llm-data.log");
+
     std::string server_address("0.0.0.0:50051");
-    AskLLMQuestionServiceImpl service;
+    AskLLMQuestionServiceImpl service(wr);
 
     // Set up the server
     ServerBuilder builder;
@@ -102,7 +114,6 @@ void RunServer() {
 }
 
 int main() {
-    printf("Hello World!\n");
     RunServer();
 
     return 0;

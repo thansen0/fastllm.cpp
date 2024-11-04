@@ -13,7 +13,6 @@ add_executable(fastllmcpp src/main.cpp)
 add_executable(testllmcpp src/test-client.cpp)
 
 # Find Protobuf
-#find_package(gRPC REQUIRED)
 find_package(Protobuf REQUIRED)
 
 # Include directories for protobuf headers
@@ -38,7 +37,5 @@ add_subdirectory(libs/llama.cpp)
 include_directories(libs/llama.cpp)
 
 # Link additional libraries if needed
-# target_link_libraries(fastllmcpp PRIVATE llama)
-# target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} ${gRPC_LIBRARIES} grpc++ pthread)
 target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ pthread)
 target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ pthread)
