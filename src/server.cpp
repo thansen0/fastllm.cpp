@@ -7,6 +7,7 @@
 #include <memory>
 #include <grpcpp/grpcpp.h>
 #include "llm_request.grpc.pb.h"
+#include "RecordRequests.h"
 
 using namespace std;
 
@@ -18,35 +19,6 @@ using llm_request::AskLLMQuestion;
 using llm_request::LLMInit;
 using llm_request::LLMInference;
 
-
-class RecordRequests {
-private:
-    std::ofstream logFile;
-
-public:
-    RecordRequests(const std::string& filePath) {
-        logFile.open(filePath);
-        if (!logFile.is_open()) {
-            throw std::ios_base::failure("Failed to open log file.");
-        }
-    }
-
-    ~RecordRequests() {
-        if (logFile.is_open()) {
-            printf("CLOSING logfile");
-            logFile.close();
-        }
-    }
-
-    void recordLLMRequest(const std::string& prompt, const std::string& result, const std::string& user_uuid) {
-        if (logFile.is_open()) {
-            logFile << "\"" << prompt << "\",\"" << result << "," << user_uuid << "\"\n";
-            logFile.flush();
-        } else {
-            std::cerr << "Log file is not open for writing.\n";
-        }
-    }
-};
 
 // Service implementation
 class AskLLMQuestionServiceImpl final : public AskLLMQuestion::Service {
