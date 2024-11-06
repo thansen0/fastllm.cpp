@@ -49,6 +49,11 @@ public:
 
     }
 
+    ~AskLLMQuestionServiceImpl() {
+        llama_free_model(model);
+    }
+
+
     // Implementation of the PromptLLM RPC
     Status PromptLLM(ServerContext* context, const LLMInit* request, LLMInference* reply) override {
 
@@ -81,7 +86,7 @@ public:
         // initialize the context
         llama_context_params ctx_params = llama_context_default_params();
         // n_ctx is the context size
-        ctx_params.n_ctx = n_prompt; // + n_predict - 1;
+        ctx_params.n_ctx = n_predict - 1; // n_prompt; // + n_predict - 1;
         // n_batch is the maximum number of tokens that can be processed in a single call to llama_decode
         ctx_params.n_batch = n_prompt;
         // enable performance counters
@@ -173,7 +178,6 @@ public:
 
         llama_sampler_free(smpl);
         llama_free(ctx);
-        llama_free_model(model);
 
 
 
