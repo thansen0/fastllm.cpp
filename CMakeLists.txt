@@ -32,6 +32,7 @@ target_sources(testllmcpp PRIVATE ${PROTO_SRCS} ${PROTO_HDRS})
 # Optionally include additional libraries or directories
 # target_include_directories(fastllmcpp PRIVATE include)
 
+include_directories(include/)
 # Add the llama.cpp library and headers
 add_subdirectory(libs/llama.cpp)
 include_directories(libs/llama.cpp)

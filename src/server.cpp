@@ -2,12 +2,14 @@
 #include <fstream> // remove ??
 #include <iostream>
 #include <string>
+#include <vector>
 #include "llama.h"
 #include "protos/llm_request.pb.h"
 #include <memory>
 #include <grpcpp/grpcpp.h>
 #include "llm_request.grpc.pb.h"
 #include "RecordRequests.h"
+#include <toml++/toml.hpp>
 
 using namespace std;
 
@@ -32,11 +34,14 @@ public:
     AskLLMQuestionServiceImpl(RecordRequests *rr_ptr) {
         rr = rr_ptr;
 
+        auto config = toml::parse_file( "../config/config.toml" );
+        std::string model_path = config["server"]["model_path"].value_or(""s);
+
         model_params = llama_model_default_params();
-        model_params.n_gpu_layers = 24; // 24 ngl;
+        model_params.n_gpu_layers = 24;
 
         // string model_path = "./models/Llama-2-7B-Chat-GGML/llama-2-7b-chat.ggmlv3.q6_K.bin";
-        string model_path = "/home/thomas/Volumes/models/Llama-3-8B-Lexi-Uncensored-GGUF/Lexi-Llama-3-8B-Uncensored_Q8_0.gguf";
+        // string model_path = "/home/thomas/Volumes/models/Llama-3-8B-Lexi-Uncensored-GGUF/Lexi-Llama-3-8B-Uncensored_Q8_0.gguf";
 
         model = llama_load_model_from_file(model_path.c_str(), model_params);
 
