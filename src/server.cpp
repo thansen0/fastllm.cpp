@@ -35,8 +35,7 @@ public:
         model_params = llama_model_default_params();
         model_params.n_gpu_layers = 24; // 24 ngl;
 
-        //string model_path = "./models/Llama-2-7B-Chat-GGML/llama-2-7b-chat.ggmlv3.q2_K.bin";
-        // string model_path = "/home/thomas/Volumes/models/Llama-3-8B-Lexi-Uncensored-GGUF/Lexi-Llama-3-8B-Uncensored_F16.gguf";
+        // string model_path = "./models/Llama-2-7B-Chat-GGML/llama-2-7b-chat.ggmlv3.q6_K.bin";
         string model_path = "/home/thomas/Volumes/models/Llama-3-8B-Lexi-Uncensored-GGUF/Lexi-Llama-3-8B-Uncensored_Q8_0.gguf";
 
         model = llama_load_model_from_file(model_path.c_str(), model_params);
@@ -45,7 +44,7 @@ public:
             fprintf(stderr , "%s: error: unable to load model\n" , __func__);
         }
 
-        n_predict = 16; // 32;
+        n_predict = 24; // 32 crashes
 
     }
 
