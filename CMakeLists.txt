@@ -1,5 +1,5 @@
 # Minimum CMake version required
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.18)
 
 # Project name and version
 project(fastllmcpp VERSION 0.1.0)
@@ -7,6 +7,7 @@ project(fastllmcpp VERSION 0.1.0)
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+# Note: llama.cpp requires nvcc 11.4
 
 # Add the executable
 add_executable(fastllmcpp src/server.cpp src/RecordRequests.cpp)
@@ -17,9 +18,6 @@ find_package(Protobuf REQUIRED)
 
 # Include directories for protobuf headers
 include_directories(${Protobuf_INCLUDE_DIRS} src/protos)
-
-# Link Protobuf libraries
-target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES})
 
 # Specify the generated protobuf files
 set(PROTO_SRCS src/protos/llm_request.pb.cc src/protos/llm_request.grpc.pb.cc)
