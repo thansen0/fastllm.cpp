@@ -48,7 +48,7 @@ private:
     std::unique_ptr<AskLLMQuestion::Stub> stub_;
 };
 
-int main() {
+int main(int argc, char* argv[]) {
     // Initialize client and connect to the server on localhost at port 50051
     LLMClient client(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
 
@@ -56,6 +56,10 @@ int main() {
     std::string api_key = "b150b0f9-235e-4f87-91db-d2b45da98a68";
     std::string prompt_text = "What is the capital of France?";
 
+    if (argc == 2) {
+        // reassign to command line input if exists
+        prompt_text = argv[1];
+    }
 
     std::cout << prompt_text << std::endl;
     // Call the service
