@@ -9,10 +9,10 @@ private:
     std::vector<std::string> key_list;
 
 public:
-    APIKeyEnforcer();
+    APIKeyEnforcer(std::vector<std::string> key_list);
     ~APIKeyEnforcer();
 
-    bool KeyVerify();
+    bool KeyVerify(std::string unique_key);
 
 };
 

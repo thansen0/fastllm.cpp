@@ -33,7 +33,6 @@ private:
 
 public:
     AskLLMQuestionServiceImpl(RecordRequests *rr_ptr) {
-        ke = new APIKeyEnforcer();
         rr = rr_ptr; // this->rr = rr;
 
         auto config = toml::parse_file( "../config/config.toml" );
@@ -68,6 +67,7 @@ public:
             std::cout << " - " << key << '\n';
         }
 
+        ke = new APIKeyEnforcer(api_keys);
 
 
 
@@ -106,9 +106,10 @@ public:
         std::promise<bool> verificationPromise;
         std::future<bool> verificationFuture = verificationPromise.get_future();
 
-        std::thread verificationThread([&verificationPromise, ke = this->ke]() {
+        std::thread verificationThread([&verificationPromise, ke = this->ke, api_key]() {
             try {
-                bool result = ke->KeyVerify();
+                std::cout << "API KEY PASSED IN " << api_key << std::endl;
+                bool result = ke->KeyVerify(api_key);
                 verificationPromise.set_value(result);
             } catch (...) {
                 verificationPromise.set_exception(std::current_exception()); // Handle any exceptions
@@ -239,22 +240,31 @@ public:
             bool isVerified = verificationFuture.get(); // blocking call
             if (isVerified) {
                 std::cout << "User is verified. Proceeding with further steps." << std::endl;
+
+                // Join the thread to clean up
+                verificationThread.join();
+
+                // Set the response
+                reply->set_answer(generated_output);
+
+                rr->recordLLMRequest(prompt, generated_output, api_key);
+
+                return Status::OK;
             } else {
                 std::cout << "User verification failed." << std::endl;
+                verificationThread.join();
+
+                return grpc::Status(grpc::StatusCode::PERMISSION_DENIED, "Unrecognized API key.");
             }
         } catch (const std::exception& ex) {
             std::cerr << "Error during verification: " << ex.what() << std::endl;
+
+            if (verificationThread.joinable()) {
+                verificationThread.join();
+            }
+
+            return grpc::Status(grpc::StatusCode::PERMISSION_DENIED, "Error during verification.");
         }
-
-        // Join the thread to clean up
-        verificationThread.join();
-
-        // Set the response
-        reply->set_answer(generated_output);
-
-        rr->recordLLMRequest(prompt, generated_output, api_key);
-
-        return Status::OK;
     }
 };
 

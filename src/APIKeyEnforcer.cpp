@@ -1,12 +1,20 @@
 #include <vector>
+#include <algorithm> // contains find function
 #include <string>
 #include "APIKeyEnforcer.h"
 
-// std::vector<string> APIKeyEnforcer::key_list;
+#include <iostream>
 
-APIKeyEnforcer::APIKeyEnforcer() {}
+using namespace std;
+
+APIKeyEnforcer::APIKeyEnforcer(vector<string> key_list) {
+    // TODO assign key_list variables
+    this->key_list = key_list;
+}
+
 APIKeyEnforcer::~APIKeyEnforcer() {}
 
-bool APIKeyEnforcer::KeyVerify() {
-    return true;
+bool APIKeyEnforcer::KeyVerify(string unique_key) {
+
+    return find(key_list.begin(), key_list.end(), unique_key) != key_list.end();
 }
