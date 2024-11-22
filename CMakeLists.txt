@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Note: llama.cpp requires nvcc 11.4
 
 # Add the executable
-add_executable(fastllmcpp src/server.cpp src/RecordRequests.cpp)
+add_executable(fastllmcpp src/server.cpp src/RecordRequests.cpp src/APIKeyEnforcer.cpp)
 add_executable(testllmcpp src/test-client.cpp)
 
 # Find Protobuf

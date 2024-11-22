@@ -1,6 +1,7 @@
 #ifndef RECORDREQUESTS_H
 #define RECORDREQUESTS_H
 
+#include <fstream>
 
 class RecordRequests {
 private:

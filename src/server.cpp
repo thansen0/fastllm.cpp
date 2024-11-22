@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <fstream> // remove ??
+#include <future>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,6 +9,7 @@
 #include <grpcpp/grpcpp.h>
 #include "llm_request.grpc.pb.h"
 #include "RecordRequests.h"
+#include "APIKeyEnforcer.h"
 #include <toml++/toml.hpp>
 
 using namespace std;
@@ -25,16 +26,55 @@ using llm_request::LLMInference;
 class AskLLMQuestionServiceImpl final : public AskLLMQuestion::Service {
 private:
     RecordRequests *rr;
+    APIKeyEnforcer *ke;
     llama_model * model;
     llama_model_params model_params;
     int n_predict;
 
 public:
     AskLLMQuestionServiceImpl(RecordRequests *rr_ptr) {
-        rr = rr_ptr;
+        ke = new APIKeyEnforcer();
+        rr = rr_ptr; // this->rr = rr;
 
         auto config = toml::parse_file( "../config/config.toml" );
         std::string model_path = config["server"]["model_path"].value_or(""s);
+
+
+
+
+        auto server = config["server"].as_table();
+        if (!server) {
+            std::cerr << "Missing or invalid [server] table.\n";
+            return;
+        }
+
+        // Extract the 'api_keys' array as a vector of strings
+        std::vector<std::string> api_keys;
+        if (auto api_keys_array = server->get("api_keys")->as_array()) {
+            for (const auto& key : *api_keys_array) {
+                if (key.is_string()) {
+                    std::cout << key.value_or("") << std::endl;
+                    api_keys.push_back(std::string{key.value_or("")});
+                }
+            }
+        } else {
+            std::cerr << "Missing or invalid 'api_keys' array.\n";
+            return;
+        }
+
+        // Print the API keys
+        std::cout << "API Keys:\n";
+        for (const auto& key : api_keys) {
+            std::cout << " - " << key << '\n';
+        }
+
+
+
+
+
+
+
+
 
         model_params = llama_model_default_params();
         model_params.n_gpu_layers = 24;
@@ -61,6 +101,19 @@ public:
         std::string api_key = request->apikey();
         std::string prompt = request->prompt();
         std::string generated_output = "";
+
+        // initialize threads
+        std::promise<bool> verificationPromise;
+        std::future<bool> verificationFuture = verificationPromise.get_future();
+
+        std::thread verificationThread([&verificationPromise, ke = this->ke]() {
+            try {
+                bool result = ke->KeyVerify();
+                verificationPromise.set_value(result);
+            } catch (...) {
+                verificationPromise.set_exception(std::current_exception()); // Handle any exceptions
+            }
+        });
 
         // Log or process the request data as needed
         std::cout << "Received API key: " << api_key << std::endl;
@@ -181,6 +234,21 @@ public:
 
 
 
+        // Wait for the verification result
+        try {
+            bool isVerified = verificationFuture.get(); // blocking call
+            if (isVerified) {
+                std::cout << "User is verified. Proceeding with further steps." << std::endl;
+            } else {
+                std::cout << "User verification failed." << std::endl;
+            }
+        } catch (const std::exception& ex) {
+            std::cerr << "Error during verification: " << ex.what() << std::endl;
+        }
+
+        // Join the thread to clean up
+        verificationThread.join();
+
         // Set the response
         reply->set_answer(generated_output);
 
@@ -191,8 +259,6 @@ public:
 };
 
 void RunServer() {
-    // TODO read in config information
-
     // create logger object
     RecordRequests *rr = new RecordRequests("/home/thomas/Code/fastllmcpp/fastllmcpp/logs/llm-data.log");
 
