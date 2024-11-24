@@ -32,50 +32,11 @@ private:
     int n_predict;
 
 public:
-    AskLLMQuestionServiceImpl(RecordRequests *rr_ptr) {
-        rr = rr_ptr; // this->rr = rr;
+    AskLLMQuestionServiceImpl(RecordRequests *rr_ptr, APIKeyEnforcer *ke_ptr, std::string model_path) {
+        this->rr = rr_ptr;
+        this->ke = ke_ptr;
 
-        auto config = toml::parse_file( "../config/config.toml" );
-        std::string model_path = config["server"]["model_path"].value_or(""s);
-
-
-
-
-        auto server = config["server"].as_table();
-        if (!server) {
-            std::cerr << "Missing or invalid [server] table.\n";
-            return;
-        }
-
-        // Extract the 'api_keys' array as a vector of strings
-        std::vector<std::string> api_keys;
-        if (auto api_keys_array = server->get("api_keys")->as_array()) {
-            for (const auto& key : *api_keys_array) {
-                if (key.is_string()) {
-                    std::cout << key.value_or("") << std::endl;
-                    api_keys.push_back(std::string{key.value_or("")});
-                }
-            }
-        } else {
-            std::cerr << "Missing or invalid 'api_keys' array.\n";
-            return;
-        }
-
-        // Print the API keys
-        std::cout << "API Keys:\n";
-        for (const auto& key : api_keys) {
-            std::cout << " - " << key << '\n';
-        }
-
-        ke = new APIKeyEnforcer(api_keys);
-
-
-
-
-
-
-
-
+        // llama.cpp loading
         model_params = llama_model_default_params();
         model_params.n_gpu_layers = 24;
 
@@ -120,6 +81,8 @@ public:
         std::cout << "Received API key: " << api_key << std::endl;
         std::cout << "Received Prompt: " << prompt << std::endl;
 
+
+        /**************  llama.cpp; Consider making separate function  ******************/
         // tokenize the prompt
         // find the number of tokens in the prompt
         const int n_prompt = -llama_tokenize(model, prompt.c_str(), prompt.size(), NULL, 0, true, true);
@@ -233,6 +196,8 @@ public:
         llama_sampler_free(smpl);
         llama_free(ctx);
 
+        /************* End llama.cpp ********************/
+
 
 
         // Wait for the verification result
@@ -268,12 +233,49 @@ public:
     }
 };
 
+
+APIKeyEnforcer* loadConfigKeyEnforcer(std::string config_path) {
+    auto config = toml::parse_file( config_path );
+    const toml::array* api_keys_array = config["server"]["api_keys"].as_array();
+
+    // Extract the 'api_keys' array as a vector of strings
+    std::vector<std::string> api_keys;
+    if (api_keys_array) {
+        for (const auto& key : *api_keys_array) {
+            if (key.is_string()) {
+                // std::cout << key.value_or("") << std::endl;
+                api_keys.push_back(std::string{key.value_or("")});
+            }
+        }
+    } else {
+        std::cerr << "Missing or invalid 'api_keys' array.\n";
+        return nullptr;
+    }
+
+    // Print the API keys
+    std::cout << "API Keys:\n";
+    for (const auto& key : api_keys) {
+        std::cout << " - " << key << '\n';
+    }
+
+    return new APIKeyEnforcer(api_keys);
+
+}
+
+std::string loadConfigModelPath(std::string config_path) {
+    auto config = toml::parse_file( config_path );
+    return config["server"]["model_path"].value_or(""s);
+    
+}
+
 void RunServer() {
     // create logger object
     RecordRequests *rr = new RecordRequests("/home/thomas/Code/fastllmcpp/fastllmcpp/logs/llm-data.log");
+    APIKeyEnforcer *ke = loadConfigKeyEnforcer("../config/config.toml");
+    std::string model_path = loadConfigModelPath("../config/config.toml");
 
     std::string server_address("0.0.0.0:50051");
-    AskLLMQuestionServiceImpl service(rr);
+    AskLLMQuestionServiceImpl service(rr, ke, model_path);
 
     // Set up the server
     ServerBuilder builder;
