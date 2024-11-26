@@ -25,17 +25,16 @@ using llm_request::LLMInference;
 // Service implementation
 class AskLLMQuestionServiceImpl final : public AskLLMQuestion::Service {
 private:
-    RecordRequests *rr;
-    APIKeyEnforcer *ke;
+    RecordRequestsBase *rr;
+    APIKeyEnforcerBase *ke;
     llama_model * model;
     llama_model_params model_params;
     int n_predict;
 
 public:
-    AskLLMQuestionServiceImpl(RecordRequests *rr_ptr, APIKeyEnforcer *ke_ptr, std::string model_path) {
-        this->rr = rr_ptr;
-        this->ke = ke_ptr;
-
+    AskLLMQuestionServiceImpl(RecordRequestsBase *rr_ptr, APIKeyEnforcerBase *ke_ptr, std::string model_path) 
+        : rr(rr_ptr), ke(ke_ptr)
+{
         // llama.cpp loading
         model_params = llama_model_default_params();
         model_params.n_gpu_layers = 24;
@@ -234,7 +233,7 @@ public:
 };
 
 
-APIKeyEnforcer* loadConfigKeyEnforcer(std::string config_path) {
+APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
     auto config = toml::parse_file( config_path );
     const toml::array* api_keys_array = config["server"]["api_keys"].as_array();
 
@@ -258,7 +257,7 @@ APIKeyEnforcer* loadConfigKeyEnforcer(std::string config_path) {
         std::cout << " - " << key << '\n';
     }
 
-    return new APIKeyEnforcer(api_keys);
+    return new APIKeyEnforcerTB(api_keys);
 
 }
 
@@ -270,8 +269,8 @@ std::string loadConfigModelPath(std::string config_path) {
 
 void RunServer() {
     // create logger object
-    RecordRequests *rr = new RecordRequests("/home/thomas/Code/fastllmcpp/fastllmcpp/logs/llm-data.log");
-    APIKeyEnforcer *ke = loadConfigKeyEnforcer("../config/config.toml");
+    RecordRequestsBase *rr = new RecordRequests("/home/thomas/Code/fastllmcpp/fastllmcpp/logs/llm-data.log");
+    APIKeyEnforcerBase *ke = loadConfigKeyEnforcer("../config/config.toml");
     std::string model_path = loadConfigModelPath("../config/config.toml");
 
     std::string server_address("0.0.0.0:50051");
