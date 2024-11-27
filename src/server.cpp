@@ -236,6 +236,8 @@ public:
 APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
     auto config = toml::parse_file( config_path );
     const toml::array* api_keys_array = config["server"]["api_keys"].as_array();
+    const int tb_burst = config["server"]["token_bucket_burst"].value_or(-1);
+    const int tb_rate = config["server"]["token_bucket_rate"].value_or(-1);
 
     // Extract the 'api_keys' array as a vector of strings
     std::vector<std::string> api_keys;
@@ -243,7 +245,7 @@ APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
         for (const auto& key : *api_keys_array) {
             if (key.is_string()) {
                 // std::cout << key.value_or("") << std::endl;
-                api_keys.push_back(std::string{key.value_or("")});
+                api_keys.push_back(std::string{key.value_or(""s)});
             }
         }
     } else {
@@ -257,8 +259,12 @@ APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
         std::cout << " - " << key << '\n';
     }
 
-    return new APIKeyEnforcerTB(api_keys);
-
+    // only use token bucket if values are supplied
+    if (tb_burst < 0 || tb_rate < 0) {
+        return new APIKeyEnforcer(api_keys);
+    } else {
+        return new APIKeyEnforcerTB(api_keys);
+    }
 }
 
 std::string loadConfigModelPath(std::string config_path) {

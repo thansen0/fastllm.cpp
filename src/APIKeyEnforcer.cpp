@@ -32,10 +32,6 @@ uint64_t getCurrentTimeNanoseconds() {
     return static_cast<uint64_t>(ns);
 }
 
-/* 
- * rate - Rate of tokens per second to accumulate in the token bucket
- * burst - Maximum of burst tokens in the token bucket
- */
 inline TokenBucket::TokenBucket(uint64_t rate, uint64_t burst)
     : _time(0),
       _time_per_token(1000000000 / rate),
@@ -90,10 +86,10 @@ bool TokenBucket::Consume(uint64_t tokens) {
 
 
 
-APIKeyEnforcerTB::APIKeyEnforcerTB(vector<string> key_list) {
+APIKeyEnforcerTB::APIKeyEnforcerTB(vector<string> key_list, const int rate, const int burst) {
     // build hash map of Token Buckets
     for (std::string key : key_list) {
-        this->key_list.insert({key, new TokenBucket(10, 10)});
+        this->key_list.insert({key, new TokenBucket(rate, burst)});
     }
 }
 

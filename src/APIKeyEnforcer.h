@@ -42,6 +42,10 @@ public:
 
 /*************** Token Bucket Implementation ****************/
 
+/* 
+ * rate - Rate of tokens per second to accumulate in the token bucket
+ * burst - Maximum of burst tokens in the token bucket
+ */
 class TokenBucket
 {
 public:
@@ -61,19 +65,12 @@ private:
     std::atomic<uint64_t> _time_per_burst;
 };
 
-
-
-
-
-
-
-
 class APIKeyEnforcerTB : public APIKeyEnforcerBase {
 private:
     std::unordered_map<string, TokenBucket*> key_list;
 
 public:
-    APIKeyEnforcerTB(std::vector<std::string> key_list);
+    APIKeyEnforcerTB(std::vector<std::string> key_list, const int rate=10, const int burst=10);
     ~APIKeyEnforcerTB();
 
     bool KeyVerify(std::string unique_key);
