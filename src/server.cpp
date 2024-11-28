@@ -45,7 +45,7 @@ public:
             fprintf(stderr , "%s: error: unable to load model\n" , __func__);
         }
 
-        n_predict = 24; // 32 crashes
+        n_predict = 24; // 32 crashes, should be config load
 
     }
 
@@ -68,7 +68,6 @@ public:
 
         std::thread verificationThread([&verificationPromise, ke = this->ke, api_key]() {
             try {
-                std::cout << "API KEY PASSED IN " << api_key << std::endl;
                 bool result = ke->KeyVerify(api_key);
                 verificationPromise.set_value(result);
             } catch (...) {
@@ -77,8 +76,8 @@ public:
         });
 
         // Log or process the request data as needed
-        std::cout << "Received API key: " << api_key << std::endl;
-        std::cout << "Received Prompt: " << prompt << std::endl;
+        // std::cout << "Received API key: " << api_key << std::endl;
+        // std::cout << "Received Prompt: " << prompt << std::endl;
 
 
         /**************  llama.cpp; Consider making separate function  ******************/
@@ -112,7 +111,7 @@ public:
 
         if (ctx == NULL) {
             fprintf(stderr , "%s: error: failed to create the llama_context\n" , __func__);
-            // return 1;
+            return Status::CANCELLED;
         }
 
         // initialize the sampler
@@ -132,7 +131,7 @@ public:
                 // return 1;
             }
             std::string s(buf, n);
-            printf("%s", s.c_str());
+            // printf("%s", s.c_str());
         }
 
 
@@ -203,8 +202,6 @@ public:
         try {
             bool isVerified = verificationFuture.get(); // blocking call
             if (isVerified) {
-                std::cout << "User is verified. Proceeding with further steps." << std::endl;
-
                 // Join the thread to clean up
                 verificationThread.join();
 
@@ -215,7 +212,7 @@ public:
 
                 return Status::OK;
             } else {
-                std::cout << "User verification failed." << std::endl;
+                std::cerr << "User verification failed." << std::endl;
                 verificationThread.join();
 
                 return grpc::Status(grpc::StatusCode::PERMISSION_DENIED, "Unrecognized API key.");
@@ -275,7 +272,7 @@ std::string loadConfigModelPath(std::string config_path) {
 
 void RunServer() {
     // create logger object
-    RecordRequestsBase *rr = new RecordRequests("/home/thomas/Code/fastllmcpp/fastllmcpp/logs/llm-data.log");
+    RecordRequestsBase *rr = new RecordRequests("../logs/llm-data.log");
     APIKeyEnforcerBase *ke = loadConfigKeyEnforcer("../config/config.toml");
     std::string model_path = loadConfigModelPath("../config/config.toml");
 
