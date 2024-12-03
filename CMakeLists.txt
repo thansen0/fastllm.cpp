@@ -20,8 +20,8 @@ find_package(Protobuf REQUIRED)
 include_directories(${Protobuf_INCLUDE_DIRS} src/protos)
 
 # Specify the generated protobuf files
-set(PROTO_SRCS src/protos/llm_request.pb.cc src/protos/llm_request.grpc.pb.cc)
-set(PROTO_HDRS src/protos/llm_request.pb.h src/protos/llm_request.grpc.pb.h)
+set(PROTO_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/llm_request.pb.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/llm_request.grpc.pb.cc)
+set(PROTO_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/llm_request.pb.h ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/llm_request.grpc.pb.h)
 
 # Add the generated protobuf files to the executable
 target_sources(fastllmcpp PRIVATE ${PROTO_SRCS} ${PROTO_HDRS})
@@ -35,6 +35,8 @@ include_directories(include/)
 add_subdirectory(libs/llama.cpp)
 include_directories(libs/llama.cpp)
 
+message(STATUS "Protobuf_LIBRARIES: ${Protobuf_LIBRARIES}")
+
 # Link additional libraries if needed
-target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ pthread)
-target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ pthread)
+target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread absl_synchronization absl_time absl_strings absl_base)
+target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread absl_synchronization absl_time absl_strings absl_base)

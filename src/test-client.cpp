@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include "llama.h"
-#include "protos/llm_request.pb.h"
+#include "llm_request.pb.h"
 #include <memory>
 #include <grpcpp/grpcpp.h>
 #include "llm_request.grpc.pb.h"

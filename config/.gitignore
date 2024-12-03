@@ -1,0 +1,2 @@
+# avoid pushing config file(s)
+*.toml
