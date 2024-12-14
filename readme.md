@@ -24,7 +24,8 @@ This project is not ready for production yet.
 You will have to build the protobuf files, and then build the actual project. There are no binaries to pull down.
 
 ```
-apt install build-essential cmake ninja-build git pkg-config libssl-dev protobuf-compiler libgrpc++-dev libprotobuf-dev grpc-proto libgrpc-dev protobuf-compiler-grpc
+apt install build-essential cmake ninja-build git pkg-config libssl-dev protobuf-compiler libgrpc++-dev libprotobuf-dev libgrpc-dev protobuf-compiler-grpc
+apt install libabsl-dev # for GPU
 
 git submodule update --init     # clones llama.cpp
 

@@ -8,13 +8,25 @@ project(fastllmcpp VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Note: llama.cpp requires nvcc 11.4
+# option(GGML_CUDA "Enable GPU support with GGML" ON)
 
 # Add the executable
 add_executable(fastllmcpp src/server.cpp src/RecordRequests.cpp src/APIKeyEnforcer.cpp)
 add_executable(testllmcpp src/test-client.cpp)
 
-# Find Protobuf
+# Find Protobuf and CUDA
 find_package(Protobuf REQUIRED)
+find_program(CUDA_COMPILER nvcc)
+# set(CUDA_COMPILER "FALSE" CACHE BOOL "Set CUDA_COMPILER to false for testing")
+
+# decides whether to turn on GPU acceleration, needs nvcc 11.4 or greater
+if (CUDA_COMPILER)
+    message(STATUS "Using GPU acceleration: ${CUDA_COMPILER}")
+    set(GGML_CUDA OFF)
+else()
+    message(WARNING "CUDA not found. GGML_CUDA will be disabled.")
+    set(GGML_CUDA OFF)
+endif()
 
 # Include directories for protobuf headers
 include_directories(${Protobuf_INCLUDE_DIRS} src/protos)
@@ -24,11 +36,8 @@ set(PROTO_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/llm_request.pb.cc ${CMAKE_
 set(PROTO_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/llm_request.pb.h ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/llm_request.grpc.pb.h)
 
 # Add the generated protobuf files to the executable
-target_sources(fastllmcpp PRIVATE ${PROTO_SRCS} ${PROTO_HDRS})
-target_sources(testllmcpp PRIVATE ${PROTO_SRCS} ${PROTO_HDRS})
-
-# Optionally include additional libraries or directories
-# target_include_directories(fastllmcpp PRIVATE include)
+target_sources(fastllmcpp PRIVATE ${PROTO_SRCS})
+target_sources(testllmcpp PRIVATE ${PROTO_SRCS})
 
 include_directories(include/)
 # Add the llama.cpp library and headers
