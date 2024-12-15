@@ -22,6 +22,13 @@ using llm_request::AskLLMQuestion;
 using llm_request::LLMInit;
 using llm_request::LLMInference;
 
+
+// function definitions
+static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path);
+static void writeConfigKeyEnforcer(std::string config_path, APIKeyEnforcerBase* ke);
+static std::string loadConfigModelPath(std::string config_path);
+void RunServer();
+
 // Service implementation
 class AskLLMQuestionServiceImpl final : public AskLLMQuestion::Service {
 private:
@@ -51,6 +58,9 @@ public:
 
     ~AskLLMQuestionServiceImpl() {
         llama_free_model(model);
+
+        // save any new keys to the toml file
+        writeConfigKeyEnforcer("../config/config.toml", ke);
     }
 
 
@@ -229,9 +239,10 @@ public:
     }
 };
 
-
-APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
-    auto config = toml::parse_file( config_path );
+static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
+    // NOTE: toml++ can throw an exception, potentially crashing the 
+    // program on an unreadable config file
+    const toml::parse_result config = toml::parse_file( config_path );
     const toml::array* api_keys_array = config["server"]["api_keys"].as_array();
     const int tb_burst = config["server"]["token_bucket_burst"].value_or(-1);
     const int tb_rate = config["server"]["token_bucket_rate"].value_or(-1);
@@ -264,7 +275,43 @@ APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
     }
 }
 
-std::string loadConfigModelPath(std::string config_path) {
+static void writeConfigKeyEnforcer(std::string config_path, APIKeyEnforcerBase* ke) {
+    try {
+        std::vector<std::string> cur_keys = ke->ReturnKeys();
+        toml::parse_result config = toml::parse_file( config_path );
+        toml::array* api_keys_array = config["server"]["api_keys"].as_array();
+
+        // clear existing keys from toml file object
+        api_keys_array->clear();
+        for (const string api_key : cur_keys) {
+            if (!api_key.empty()) {
+                api_keys_array->push_back(api_key);
+            }
+        }
+
+        // Write the updated TOML configuration back to the file
+        std::ofstream output_file(config_path);
+        if (!output_file) {
+            std::cerr << "Error: Unable to open the file for writing." << std::endl;
+            // return without writing
+            return;
+        }
+        output_file << config;
+
+        std::cout << "Updated TOML file successfully written to " << config_path << std::endl;
+
+    }
+    catch (const toml::parse_error& err)
+    {
+        std::cerr << "toml++ parsing failed:\n" << err << std::endl;
+    }
+    catch (const std::exception &exc)
+    {
+        std::cerr << exc.what() << std::endl;
+    }
+}
+
+static std::string loadConfigModelPath(std::string config_path) {
     auto config = toml::parse_file( config_path );
     return config["server"]["model_path"].value_or(""s);
     

@@ -22,6 +22,9 @@ bool APIKeyEnforcer::KeyVerify(string unique_key) {
     return find(key_list.begin(), key_list.end(), unique_key) != key_list.end();
 }
 
+std::vector<std::string> APIKeyEnforcer::ReturnKeys() {
+    return key_list;
+}
 
 
 /***************** Token Bucket *******************/
@@ -87,6 +90,9 @@ bool TokenBucket::Consume(uint64_t tokens) {
 
 
 APIKeyEnforcerTB::APIKeyEnforcerTB(vector<string> key_list, const int rate, const int burst) {
+    this->rate = rate;
+    this->burst = burst;
+
     // build hash map of Token Buckets
     for (std::string key : key_list) {
         this->key_list.insert({key, new TokenBucket(rate, burst)});
@@ -106,7 +112,22 @@ bool APIKeyEnforcerTB::KeyVerify(string unique_key) {
     }
 
     key_list[unique_key]->Consume();
-
-
     return true;
 }
+
+void APIKeyEnforcerTB::AddKey(string unique_key) {
+    this->key_list.insert({unique_key, new TokenBucket(this->rate, this->burst)});
+}
+
+std::vector<std::string> APIKeyEnforcerTB::ReturnKeys() {
+    // move from unordered map to vector
+    vector<string> keys(key_list.size());
+
+    int key_index = 0;
+    for (auto kv : key_list) {
+        keys[key_index++] = kv.first;
+    }
+
+    return keys;
+}
+

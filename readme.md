@@ -4,13 +4,13 @@ FastLLM.cpp is an LLM service designed with speed and low latency in mind. Depen
 
 This service comes after a previous failed startup of mine. We used small models and needed as low of latency as possible. At the time everything was built in python, and I always felt like we were leaving performance on the table with python or external API's. This is, in essence, the software I wish I had when I started building.
 
-Based on [llama.cpp](https://github.com/ggerganov/llama.cpp) and [GGML](https://github.com/ggerganov/ggml).
+Based on [llama.cpp](https://github.com/ggerganov/llama.cpp) and [GGML](https://github.com/ggerganov/ggml). It is recommended that users of the project fork it, and make changes to the APIKeyEnforcer and RecordRequests to better fit their use case.
 
 Please feel free to contact me at **contact@thomashansen.xyz** if you have any questions about use. I'd be happy to help anyone getting started or thinking about using FastLLM.cpp, especially as this is a new project.
 
 ## NOTICE
 
-This project is not ready for production yet.
+While this project can be used in production, it's in an early stage and may see major changes in the future.
 
 ## Requirements
 
@@ -37,6 +37,12 @@ cmake -G Ninja ..   # cmake ..
 ninja               # cmake --build .
 ```
 
+For building without GPU support, you may set the flag `USE\_GPU=OFF`. GPU support will also be turned off if cmake doesn't detect nvcc (the CUDA compiler).
+
+```
+cmake -G Ninja ../ -DUSE_GPU=OFF
+```
+
 ## Config file Setup
 
 You will need to set up the config file in `./config/config.toml`. The config file will look something like this, I added `uuid`'s as API keys. If you don't want to use rate limiting on your service, simply don't add the `token_bucket_burst` and/or `token_bucket_rate` value and it will default to ignore them.
@@ -49,7 +55,7 @@ model_path="/home/username/Volumes/models/Llama-3.2-1B-Instruct-GGUF/Llama-3.2-1
 api_keys=["fc513bbb-6306-42d7-b385-48c3c2240d11", "866e974d-8308-4620-9706-26684a640df0"]
 ```
 
-You must separately clone and link to a GUFF model. I am using [this one](https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF).
+You must separately clone and link to a GUFF model. [This one](https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF) works and is easily accessible.
 
 ```
 git clone https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF
@@ -61,7 +67,7 @@ If you don't already have opinions on this I recommend running it as a systemd s
 
 ## Contributions
 
-Feel free to create issues as you see them or submit PR's. Also feel free to email me at contact@thomashansen.xyz if you have questions.
+Feel free to create issues as you see them or submit PR's. Also feel free to email me at contact@thomashansen.xyz if you have questions or message me on [X](https://x.com/mongocompass).
 
 ## Donate
 

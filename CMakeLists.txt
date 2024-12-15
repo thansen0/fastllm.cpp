@@ -8,7 +8,6 @@ project(fastllmcpp VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Note: llama.cpp requires nvcc 11.4
-# option(GGML_CUDA "Enable GPU support with GGML" ON)
 
 # Add the executable
 add_executable(fastllmcpp src/server.cpp src/RecordRequests.cpp src/APIKeyEnforcer.cpp)
@@ -16,16 +15,18 @@ add_executable(testllmcpp src/test-client.cpp)
 
 # Find Protobuf and CUDA
 find_package(Protobuf REQUIRED)
-find_program(CUDA_COMPILER nvcc)
-# set(CUDA_COMPILER "FALSE" CACHE BOOL "Set CUDA_COMPILER to false for testing")
+find_program(CUDA_COMPILER nvcc) # requires nvcc 11.4 or greater
+option(USE_GPU "Enable GPU processing" ON)
 
-# decides whether to turn on GPU acceleration, needs nvcc 11.4 or greater
-if (CUDA_COMPILER)
+# Disables GPU if the user doesn't have nvcc or turns it off
+if (CUDA_COMPILER AND USE_GPU)
     message(STATUS "Using GPU acceleration: ${CUDA_COMPILER}")
-    set(GGML_CUDA OFF)
+    set(GGML_CUDA ON)
+    set(ABSL_LIBS absl_synchronization absl_time absl_strings absl_base)
 else()
-    message(WARNING "CUDA not found. GGML_CUDA will be disabled.")
+    message(WARNING "CUDA not found or USE_GPU flag set to OFF. GGML_CUDA will be disabled.")
     set(GGML_CUDA OFF)
+    set(ABSL_LIBS "")
 endif()
 
 # Include directories for protobuf headers
@@ -47,5 +48,7 @@ include_directories(libs/llama.cpp)
 message(STATUS "Protobuf_LIBRARIES: ${Protobuf_LIBRARIES}")
 
 # Link additional libraries if needed
-target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread absl_synchronization absl_time absl_strings absl_base)
-target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread absl_synchronization absl_time absl_strings absl_base)
+target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS})
+target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS})
+#target_link_libraries(fastllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread absl_synchronization absl_time absl_strings absl_base)
+#target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread absl_synchronization absl_time absl_strings absl_base)

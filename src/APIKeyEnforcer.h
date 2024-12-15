@@ -2,7 +2,7 @@
 #define APIKEYENFORCER_H
 
 #include <unordered_map>
-#include <memory> // unique_ptr
+#include <stdexcept>
 #include <vector>
 #include <string>
 
@@ -18,9 +18,11 @@ public:
     virtual ~APIKeyEnforcerBase() = default;
 
     virtual bool KeyVerify(std::string unique_key) = 0;
-
+    virtual std::vector<std::string> ReturnKeys() = 0;
+    virtual void AddKey(std::string unique_key) {
+        throw std::logic_error("AddKey not implemented");
+    }
 };
-
 
 
 
@@ -35,7 +37,7 @@ public:
     ~APIKeyEnforcer();
 
     bool KeyVerify(std::string unique_key);
-
+    std::vector<std::string> ReturnKeys();
 };
 
 
@@ -68,13 +70,16 @@ private:
 class APIKeyEnforcerTB : public APIKeyEnforcerBase {
 private:
     std::unordered_map<string, TokenBucket*> key_list;
+    int rate;
+    int burst;
 
 public:
     APIKeyEnforcerTB(std::vector<std::string> key_list, const int rate=10, const int burst=10);
     ~APIKeyEnforcerTB();
 
     bool KeyVerify(std::string unique_key);
-
+    void AddKey(std::string unique_key);
+    std::vector<std::string> ReturnKeys();
 };
 
 
