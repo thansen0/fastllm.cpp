@@ -73,9 +73,9 @@ Feel free to create issues as you see them or submit PR's. Also feel free to ema
 
 I also appreciate donations!
 
-BTC Address: `3QDGJyRWiVEUyCytQBWJ5h3kVQAca8pZ1L`
+BTC Address: `3QDGJyRWiVEUyCytQBWJ5h3kVQAca8pZ1L`  
 XMR Address: `85pJmtRzE6zWhSpggKyiXHDG56FM6ydStYBRfuU4FV5Y1uCvnBwAuacRNRNkAJmAR76fzBF5QQeBiEnuaQJeiHaDF7D6xFb`
 
 # License
 
-This project is licensed with the unlicense. The idea is you may use this project however you wish, without having to attribute it to the original source. You may clone the repo into your company's private code and then place it under your company's private license. We do appreciate contributions though!
+This project is licensed with the unlicense. The idea is you may use this project however you wish, without having to attribute it to the original source. You may clone the repo into your company's private code and then place it under your company's private license.
