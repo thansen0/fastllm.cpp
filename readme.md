@@ -47,8 +47,11 @@ cmake -G Ninja ../ -DUSE_GPU=OFF
 
 You will need to set up the config file in `./config/config.toml`. The config file will look something like this, I added `uuid`'s as API keys. If you don't want to use rate limiting on your service, simply don't add the `token_bucket_burst` and/or `token_bucket_rate` value and it will default to ignore them.
 
+`n_predict` is from llama.cpp, and refers to the context window of the model. This is limited by your GPU, so you may have to play around with the value.
+
 ```
 [server]
+n_predict = 24
 token_bucket_rate=10
 token_bucket_burst=10
 model_path="/home/username/Volumes/models/Llama-3.2-1B-Instruct-GGUF/Llama-3.2-1B-Instruct-Q6_K_L.gguf"

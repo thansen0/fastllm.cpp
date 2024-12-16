@@ -12,6 +12,8 @@
 #include "APIKeyEnforcer.h"
 #include <toml++/toml.hpp>
 
+#define DEBUG_MODE      false
+
 using namespace std;
 
 using grpc::Server;
@@ -27,6 +29,7 @@ using llm_request::LLMInference;
 static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path);
 static void writeConfigKeyEnforcer(std::string config_path, APIKeyEnforcerBase* ke);
 static std::string loadConfigModelPath(std::string config_path);
+static int loadConfigNPredict(std::string config_path);
 void RunServer();
 
 // Service implementation
@@ -39,8 +42,8 @@ private:
     int n_predict;
 
 public:
-    AskLLMQuestionServiceImpl(RecordRequestsBase *rr_ptr, APIKeyEnforcerBase *ke_ptr, std::string model_path) 
-        : rr(rr_ptr), ke(ke_ptr)
+    AskLLMQuestionServiceImpl(RecordRequestsBase *rr_ptr, APIKeyEnforcerBase *ke_ptr, std::string model_path, int n_predict) 
+        : rr(rr_ptr), ke(ke_ptr), n_predict(n_predict)
 {
         // llama.cpp loading
         model_params = llama_model_default_params();
@@ -51,8 +54,6 @@ public:
         if (model == NULL) {
             fprintf(stderr , "%s: error: unable to load model\n" , __func__);
         }
-
-        n_predict = 24; // 32 crashes, should be config load
 
     }
 
@@ -85,10 +86,6 @@ public:
             }
         });
 
-        // Log or process the request data as needed
-        // std::cout << "Received API key: " << api_key << std::endl;
-        // std::cout << "Received Prompt: " << prompt << std::endl;
-
 
         /**************  llama.cpp; Consider making separate function  ******************/
         // tokenize the prompt
@@ -105,7 +102,9 @@ public:
             fprintf(stderr, "%s: error: failed to tokenize the prompt\n", __func__);
             return Status::CANCELLED;
         }
-        std::cout << prompt << "\n";
+
+        if (DEBUG_MODE)
+            std::cout << prompt << "\n";
 
 
         // initialize the context
@@ -120,7 +119,8 @@ public:
         llama_context * ctx = llama_new_context_with_model(model, ctx_params);
 
         if (ctx == NULL) {
-            fprintf(stderr , "%s: error: failed to create the llama_context\n" , __func__);
+            if (DEBUG_MODE)
+                fprintf(stderr , "%s: error: failed to create the llama_context\n" , __func__);
             return Status::CANCELLED;
         }
 
@@ -138,7 +138,7 @@ public:
             int n = llama_token_to_piece(model, id, buf, sizeof(buf), 0, true);
             if (n < 0) {
                 fprintf(stderr, "%s: error: failed to convert token to piece\n", __func__);
-                // return 1;
+                return Status::CANCELLED;
             }
             std::string s(buf, n);
             // printf("%s", s.c_str());
@@ -149,14 +149,18 @@ public:
         llama_batch batch = llama_batch_get_one(prompt_tokens.data(), prompt_tokens.size());
 
         // main loop
-        const auto t_main_start = ggml_time_us();
+        int64_t t_main_start;
         int n_decode = 0;
         llama_token new_token_id;
+
+        if (DEBUG_MODE)
+            t_main_start = ggml_time_us();
 
         for (int n_pos = 0; n_pos + batch.n_tokens < n_prompt + n_predict; ) {
             // evaluate the current batch with the transformer model
             if (llama_decode(ctx, batch)) {
-                fprintf(stderr, "%s : failed to eval, return code %d\n", __func__, 1);
+                if (DEBUG_MODE)
+                    fprintf(stderr, "%s : failed to eval, return code %d\n", __func__, 1);
                 // return Status::CANCELLED;
             }
 
@@ -178,8 +182,10 @@ public:
                     return Status::CANCELLED;
                 }
                 std::string s(buf, n);
-                printf("%s", s.c_str());
-                fflush(stdout);
+                if (DEBUG_MODE) {
+                    printf("%s", s.c_str());
+                    fflush(stdout);
+                }
                 generated_output += s;
 
                 // prepare the next batch with the sampled token
@@ -189,17 +195,19 @@ public:
             }
         }
 
-        printf("\n");
+        if (DEBUG_MODE) {
+            printf("\n");
 
-        const auto t_main_end = ggml_time_us();
+            const int64_t t_main_end = ggml_time_us();
 
-        fprintf(stderr, "%s: decoded %d tokens in %.2f s, speed: %.2f t/s\n",
-                __func__, n_decode, (t_main_end - t_main_start) / 1000000.0f, n_decode / ((t_main_end - t_main_start) / 1000000.0f));
+            fprintf(stderr, "%s: decoded %d tokens in %.2f s, speed: %.2f t/s\n",
+                    __func__, n_decode, (t_main_end - t_main_start) / 1000000.0f, n_decode / ((t_main_end - t_main_start) / 1000000.0f));
 
-        fprintf(stderr, "\n");
-        llama_perf_sampler_print(smpl);
-        llama_perf_context_print(ctx);
-        fprintf(stderr, "\n");
+            fprintf(stderr, "\n");
+            llama_perf_sampler_print(smpl);
+            llama_perf_context_print(ctx);
+            fprintf(stderr, "\n");
+        }
 
         llama_sampler_free(smpl);
         llama_free(ctx);
@@ -222,13 +230,15 @@ public:
 
                 return Status::OK;
             } else {
-                std::cerr << "User verification failed." << std::endl;
+                if (DEBUG_MODE)
+                    std::cerr << "User verification failed." << std::endl;
                 verificationThread.join();
 
                 return grpc::Status(grpc::StatusCode::PERMISSION_DENIED, "Unrecognized API key.");
             }
         } catch (const std::exception& ex) {
-            std::cerr << "Error during verification: " << ex.what() << std::endl;
+            if (DEBUG_MODE)
+                std::cerr << "Error during verification: " << ex.what() << std::endl;
 
             if (verificationThread.joinable()) {
                 verificationThread.join();
@@ -317,14 +327,20 @@ static std::string loadConfigModelPath(std::string config_path) {
     
 }
 
+static int loadConfigNPredict(std::string config_path) {
+    auto config = toml::parse_file( config_path );
+    return config["server"]["n_predict"].value_or(24);
+}
+
 void RunServer() {
     // create logger object
     RecordRequestsBase *rr = new RecordRequests("../logs/llm-data.log");
     APIKeyEnforcerBase *ke = loadConfigKeyEnforcer("../config/config.toml");
     std::string model_path = loadConfigModelPath("../config/config.toml");
+    int n_predict = loadConfigNPredict("../config/config.toml");
 
     std::string server_address("0.0.0.0:50051");
-    AskLLMQuestionServiceImpl service(rr, ke, model_path);
+    AskLLMQuestionServiceImpl service(rr, ke, model_path, n_predict);
 
     // Set up the server
     ServerBuilder builder;
