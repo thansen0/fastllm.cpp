@@ -1,3 +1,6 @@
 [submodule "libs/llama.cpp"]
 	path = libs/llama.cpp
 	url = git@github.com:ggerganov/llama.cpp.git
+[submodule "libs/jansson"]
+	path = libs/jansson
+	url = git@github.com:akheron/jansson.git
