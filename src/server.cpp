@@ -334,7 +334,8 @@ static int loadConfigNPredict(std::string config_path) {
 
 void RunServer() {
     // create logger object
-    RecordRequestsBase *rr = new RecordRequests("../logs/llm-data.log");
+    // RecordRequestsBase *rr = new RecordRequests("../logs/llm-data.log");
+    RecordRequestsBase *rr = new RecordRequestsREST("http://localhost:4000/api/prompts");
     APIKeyEnforcerBase *ke = loadConfigKeyEnforcer("../config/config.toml");
     std::string model_path = loadConfigModelPath("../config/config.toml");
     int n_predict = loadConfigNPredict("../config/config.toml");
