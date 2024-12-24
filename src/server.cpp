@@ -27,6 +27,7 @@ using llm_request::LLMInference;
 
 // function definitions
 static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path);
+static RecordRequestsBase* loadConfigRecordRequests(std::string config_path);
 static void writeConfigKeyEnforcer(std::string config_path, APIKeyEnforcerBase* ke);
 static std::string loadConfigModelPath(std::string config_path);
 static int loadConfigNPredict(std::string config_path);
@@ -332,10 +333,21 @@ static int loadConfigNPredict(std::string config_path) {
     return config["server"]["n_predict"].value_or(24);
 }
 
+static RecordRequestsBase* loadConfigRecordRequests(std::string config_path) {
+    auto config = toml::parse_file( config_path );
+    std::string post_url = config["server"]["post_request_url"].value_or(""s);
+
+    if (post_url.empty()) {
+        // NOTE: Change value if you want a different log location
+        return new RecordRequests("../logs/llm-data.log");
+    }
+
+    return new RecordRequestsREST(post_url);
+}
+
 void RunServer() {
     // create logger object
-    // RecordRequestsBase *rr = new RecordRequests("../logs/llm-data.log");
-    RecordRequestsBase *rr = new RecordRequestsREST("http://localhost:4000/api/prompts");
+    RecordRequestsBase *rr = loadConfigRecordRequests("../config/config.toml");
     APIKeyEnforcerBase *ke = loadConfigKeyEnforcer("../config/config.toml");
     std::string model_path = loadConfigModelPath("../config/config.toml");
     int n_predict = loadConfigNPredict("../config/config.toml");
