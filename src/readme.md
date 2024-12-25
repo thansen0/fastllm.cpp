@@ -18,10 +18,11 @@ All logging is done in a separate thread, so no option is slower than any other.
  - APIKeyEnforcerBase - The base class.
  - APIKeyEnforcer - Compares keys against a defined list in the config file, under the `api_keys` label.
  - APIKeyEnforcerTB - Uses the key list from APIKeyEnforcer, but adds token bucket rate limiting.
+ - APIKeyEnforcerTBAddUser - APIKeyEnforcerTB, but checks API for newly added users
 
 ## Config File 
 
-In `server.cpp`, if the config file does not receive arguments required for a class, it will default to a simpler class. So if you don't include `token_bucket_burst` and `token_bucket_rate`, it will not use the token bucket `APIKeyEnforcerTB` implementation and will instead use `APIKeyEnforcer`.
+In `server.cpp`, if the config file does not receive arguments required for a class, it will default to a simpler class. So if you don't use `verify_user_url` it will not use `APIKeyEnforcerTBAddUser` and will default to `APIKeyEnforcerTB`. Along those lines if you don't include `token_bucket_burst` and `token_bucket_rate`, it will not use the token bucket `APIKeyEnforcerTB` implementation and will instead use `APIKeyEnforcer`.
 
 Similarly if you don't include `post_request_url`, the server will use `RecordRequests` by default.
 
@@ -37,6 +38,7 @@ token_bucket_burst = 10
 token_bucket_rate = 10
 n_predict = 100
 post_request_url = 'http://localhost:4000/api/prompts'
+verify_user_url = 'http://localhost:4000/api/verify_pkey'
 ```
 
 Here is a minimal `config.toml` file

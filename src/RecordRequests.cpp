@@ -55,7 +55,7 @@ void RecordRequestsREST::POSTtoAPI(const char* json_str) {
 
     // leave if error and no data
     if (strlen(json_str) < 1) {
-        return
+        return;
     }
 
     // CURL* cannot be shared between threads

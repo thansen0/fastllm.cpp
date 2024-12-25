@@ -82,5 +82,28 @@ public:
     std::vector<std::string> ReturnKeys();
 };
 
+/************ TB with API User Add ****************/
+// uses TokenBucket implementation above
+
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
+
+class APIKeyEnforcerTBAddUser : public APIKeyEnforcerBase {
+private:
+    std::unordered_map<string, TokenBucket*> key_list;
+    const std::string verify_url;
+    int rate;
+    int burst;
+
+    virtual std::string POSTtoAPI(const char* json_str);
+
+public:
+    APIKeyEnforcerTBAddUser(std::vector<std::string> key_list, const std::string url, const int rate=10, const int burst=10);
+    ~APIKeyEnforcerTBAddUser();
+
+    bool KeyVerify(std::string unique_key);
+    void AddKey(std::string unique_key);
+    std::vector<std::string> ReturnKeys();
+};
+
 
 #endif // APIKEYENFORCER_H

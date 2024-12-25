@@ -229,6 +229,8 @@ public:
 
                 rr->recordLLMRequest(prompt, generated_output, api_key);
 
+                if (DEBUG_MODE)
+                    std::cout << "gRPC LLM inference being returned." << std::endl;
                 return Status::OK;
             } else {
                 if (DEBUG_MODE)
@@ -257,6 +259,7 @@ static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
     const toml::array* api_keys_array = config["server"]["api_keys"].as_array();
     const int tb_burst = config["server"]["token_bucket_burst"].value_or(-1);
     const int tb_rate = config["server"]["token_bucket_rate"].value_or(-1);
+    const std::string pkey_verify_url = config["server"]["verify_user_url"].value_or(""s);
 
     // Extract the 'api_keys' array as a vector of strings
     std::vector<std::string> api_keys;
@@ -272,17 +275,26 @@ static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
         return nullptr;
     }
 
-    // Print the API keys
-    std::cout << "API Keys:\n";
-    for (const auto& key : api_keys) {
-        std::cout << " - " << key << '\n';
+    if (DEBUG_MODE) {
+        // Print the API keys
+        std::cout << "API Keys:\n";
+        for (const auto& key : api_keys) {
+            std::cout << " - " << key << '\n';
+        }
     }
 
     // only use token bucket if values are supplied
     if (tb_burst < 0 || tb_rate < 0) {
+        // no extra inputs, just verify API keys
         return new APIKeyEnforcer(api_keys);
     } else {
-        return new APIKeyEnforcerTB(api_keys);
+        if (pkey_verify_url.empty()) {
+            // no url, just burst and rate values
+            return new APIKeyEnforcerTB(api_keys, tb_rate, tb_burst);
+        } else {
+            // has url and rate/burst values
+            return new APIKeyEnforcerTBAddUser(api_keys, pkey_verify_url, tb_rate, tb_burst);
+        }
     }
 }
 
