@@ -31,7 +31,9 @@ static RecordRequestsBase* loadConfigRecordRequests(std::string config_path);
 static void writeConfigKeyEnforcer(std::string config_path, APIKeyEnforcerBase* ke);
 static std::string loadConfigModelPath(std::string config_path);
 static int loadConfigNPredict(std::string config_path);
+void noop_log_callback(ggml_log_level level, const char* message, void* user_data);
 void RunServer();
+
 
 // Service implementation
 class AskLLMQuestionServiceImpl final : public AskLLMQuestion::Service {
@@ -48,7 +50,7 @@ public:
 {
         // llama.cpp loading
         model_params = llama_model_default_params();
-        model_params.n_gpu_layers = 24;
+        model_params.n_gpu_layers = 64; // number of layers to offload to the GPU
 
         model = llama_load_model_from_file(model_path.c_str(), model_params);
 
@@ -56,6 +58,10 @@ public:
             fprintf(stderr , "%s: error: unable to load model\n" , __func__);
         }
 
+        if (!DEBUG_MODE) {
+            // needed because llama_context_params can't disable logging
+            llama_log_set(noop_log_callback, nullptr);
+        }
     }
 
     ~AskLLMQuestionServiceImpl() {
@@ -111,11 +117,12 @@ public:
         // initialize the context
         llama_context_params ctx_params = llama_context_default_params();
         // n_ctx is the context size
-        ctx_params.n_ctx = n_predict - 1; // n_prompt; // + n_predict - 1;
-        // n_batch is the maximum number of tokens that can be processed in a single call to llama_decode
+        ctx_params.n_ctx = n_prompt + n_predict - 1; // n_predict - 1;
+        // n_batch is the max number of tokens that can be processed in a single llama_decode call
         ctx_params.n_batch = n_prompt;
         // enable performance counters
         ctx_params.no_perf = false;
+
 
         llama_context * ctx = llama_new_context_with_model(model, ctx_params);
 
@@ -126,11 +133,9 @@ public:
         }
 
         // initialize the sampler
-
         auto sparams = llama_sampler_chain_default_params();
         sparams.no_perf = false;
         llama_sampler * smpl = llama_sampler_chain_init(sparams);
-
         llama_sampler_chain_add(smpl, llama_sampler_init_greedy());
 
         // print the prompt token-by-token
@@ -160,9 +165,8 @@ public:
         for (int n_pos = 0; n_pos + batch.n_tokens < n_prompt + n_predict; ) {
             // evaluate the current batch with the transformer model
             if (llama_decode(ctx, batch)) {
-                if (DEBUG_MODE)
-                    fprintf(stderr, "%s : failed to eval, return code %d\n", __func__, 1);
-                // return Status::CANCELLED;
+                fprintf(stderr, "%s : failed to eval, return code %d\n", __func__, 1);
+                return Status::CANCELLED;
             }
 
             n_pos += batch.n_tokens;
@@ -355,6 +359,10 @@ static RecordRequestsBase* loadConfigRecordRequests(std::string config_path) {
     }
 
     return new RecordRequestsREST(post_url);
+}
+
+void noop_log_callback(ggml_log_level level, const char* message, void* user_data) {
+    // This function intentionally left blank to suppress logging
 }
 
 void RunServer() {
