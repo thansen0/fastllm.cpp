@@ -225,13 +225,18 @@ public:
         try {
             bool isVerified = verificationFuture.get(); // blocking call
             if (isVerified) {
+                // record prompt and generated output
+                std::thread logRequestThread([this, prompt, generated_output, api_key]() {
+                    this->rr->recordLLMRequest(prompt, generated_output, api_key);
+                });
+                // this function may not complete if the program is cancelled
+                logRequestThread.detach();
+
                 // Join the thread to clean up
                 verificationThread.join();
 
                 // Set the response
                 reply->set_answer(generated_output);
-
-                rr->recordLLMRequest(prompt, generated_output, api_key);
 
                 if (DEBUG_MODE)
                     std::cout << "gRPC LLM inference being returned." << std::endl;
@@ -255,6 +260,10 @@ public:
         }
     }
 };
+
+void noop_log_callback(ggml_log_level level, const char* message, void* user_data) {
+    // This function is intentionally left blank to suppress logging
+}
 
 static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path) {
     // NOTE: toml++ can throw an exception, potentially crashing the 
@@ -359,10 +368,6 @@ static RecordRequestsBase* loadConfigRecordRequests(std::string config_path) {
     }
 
     return new RecordRequestsREST(post_url);
-}
-
-void noop_log_callback(ggml_log_level level, const char* message, void* user_data) {
-    // This function intentionally left blank to suppress logging
 }
 
 void RunServer() {
