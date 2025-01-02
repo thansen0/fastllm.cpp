@@ -30,7 +30,8 @@ static APIKeyEnforcerBase* loadConfigKeyEnforcer(std::string config_path);
 static RecordRequestsBase* loadConfigRecordRequests(std::string config_path);
 static void writeConfigKeyEnforcer(std::string config_path, APIKeyEnforcerBase* ke);
 static std::string loadConfigModelPath(std::string config_path);
-static int loadConfigNPredict(std::string config_path);
+static unsigned int loadConfigNPredict(std::string config_path);
+static unsigned int loadConfigGPULayers(std::string config_path);
 void noop_log_callback(ggml_log_level level, const char* message, void* user_data);
 void RunServer();
 
@@ -45,12 +46,12 @@ private:
     int n_predict;
 
 public:
-    AskLLMQuestionServiceImpl(RecordRequestsBase *rr_ptr, APIKeyEnforcerBase *ke_ptr, std::string model_path, int n_predict) 
+    AskLLMQuestionServiceImpl(RecordRequestsBase *rr_ptr, APIKeyEnforcerBase *ke_ptr, std::string model_path, unsigned int n_predict = 24, unsigned int n_gpu_layers = 64) 
         : rr(rr_ptr), ke(ke_ptr), n_predict(n_predict)
 {
         // llama.cpp loading
         model_params = llama_model_default_params();
-        model_params.n_gpu_layers = 64; // number of layers to offload to the GPU
+        model_params.n_gpu_layers = n_gpu_layers; // number of layers to offload to the GPU
 
         model = llama_load_model_from_file(model_path.c_str(), model_params);
 
@@ -353,9 +354,14 @@ static std::string loadConfigModelPath(std::string config_path) {
     
 }
 
-static int loadConfigNPredict(std::string config_path) {
+static unsigned int loadConfigNPredict(std::string config_path) {
     auto config = toml::parse_file( config_path );
     return config["server"]["n_predict"].value_or(24);
+}
+
+static unsigned int loadConfigGPULayers(std::string config_path) {
+    auto config = toml::parse_file( config_path );
+    return config["server"]["n_gpu_layers"].value_or(64);
 }
 
 static RecordRequestsBase* loadConfigRecordRequests(std::string config_path) {
@@ -375,10 +381,11 @@ void RunServer() {
     RecordRequestsBase *rr = loadConfigRecordRequests("../config/config.toml");
     APIKeyEnforcerBase *ke = loadConfigKeyEnforcer("../config/config.toml");
     std::string model_path = loadConfigModelPath("../config/config.toml");
-    int n_predict = loadConfigNPredict("../config/config.toml");
+    unsigned int n_predict = loadConfigNPredict("../config/config.toml");
+    unsigned int n_gpu_layers = loadConfigGPULayers("../config/config.toml");
 
     std::string server_address("0.0.0.0:50051");
-    AskLLMQuestionServiceImpl service(rr, ke, model_path, n_predict);
+    AskLLMQuestionServiceImpl service(rr, ke, model_path, n_predict, n_gpu_layers);
 
     // Set up the server
     ServerBuilder builder;

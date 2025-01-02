@@ -37,6 +37,7 @@ model_path = '../models/Llama-3.2-1B-Instruct-GGUF/Llama-3.2-1B-Instruct-Q6_K_L.
 token_bucket_burst = 10
 token_bucket_rate = 10
 n_predict = 100
+n_gpu_layers = 64
 post_request_url = 'http://localhost:4000/api/prompts'
 verify_user_url = 'http://localhost:4000/api/verify_pkey'
 ```
