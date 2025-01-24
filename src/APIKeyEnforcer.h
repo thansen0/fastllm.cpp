@@ -1,3 +1,14 @@
+/* 
+ *    ___         __  ____                   
+ *   / __/_ ____ / /_/ / /_ _   _______  ___    C++ for Fast LLM Inference
+ *  / _/ _ `(_-</ __/ / /  ' \_/ __/ _ \/ _ \   version 0.0.1
+ * /_/ \_,_/___/\__/_/_/_/_/_(_)__/ .__/ .__/   https://github.com/thansen0
+ *                               /_/  /_/    
+ *
+ * SPDX-FileCopyrightText: 2025 thansen0 <https://github.com/thansen0>
+ * SPDX-License-Identifier: Unlicense
+ */
+
 #ifndef APIKEYENFORCER_H
 #define APIKEYENFORCER_H
 
