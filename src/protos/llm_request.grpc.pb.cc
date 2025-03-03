@@ -6,19 +6,19 @@
 #include "llm_request.grpc.pb.h"
 
 #include <functional>
-#include <grpcpp/impl/codegen/async_stream.h>
-#include <grpcpp/impl/codegen/async_unary_call.h>
-#include <grpcpp/impl/codegen/channel_interface.h>
-#include <grpcpp/impl/codegen/client_unary_call.h>
-#include <grpcpp/impl/codegen/client_callback.h>
-#include <grpcpp/impl/codegen/message_allocator.h>
-#include <grpcpp/impl/codegen/method_handler.h>
-#include <grpcpp/impl/codegen/rpc_service_method.h>
-#include <grpcpp/impl/codegen/server_callback.h>
+#include <grpcpp/support/async_stream.h>
+#include <grpcpp/support/async_unary_call.h>
+#include <grpcpp/impl/channel_interface.h>
+#include <grpcpp/impl/client_unary_call.h>
+#include <grpcpp/support/client_callback.h>
+#include <grpcpp/support/message_allocator.h>
+#include <grpcpp/support/method_handler.h>
+#include <grpcpp/impl/rpc_service_method.h>
+#include <grpcpp/support/server_callback.h>
 #include <grpcpp/impl/codegen/server_callback_handlers.h>
-#include <grpcpp/impl/codegen/server_context.h>
-#include <grpcpp/impl/codegen/service_type.h>
-#include <grpcpp/impl/codegen/sync_stream.h>
+#include <grpcpp/server_context.h>
+#include <grpcpp/impl/service_type.h>
+#include <grpcpp/support/sync_stream.h>
 namespace llm_request {
 
 static const char* AskLLMQuestion_method_names[] = {
@@ -27,49 +27,44 @@ static const char* AskLLMQuestion_method_names[] = {
 
 std::unique_ptr< AskLLMQuestion::Stub> AskLLMQuestion::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
   (void)options;
-  std::unique_ptr< AskLLMQuestion::Stub> stub(new AskLLMQuestion::Stub(channel));
+  std::unique_ptr< AskLLMQuestion::Stub> stub(new AskLLMQuestion::Stub(channel, options));
   return stub;
 }
 
-AskLLMQuestion::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
-  : channel_(channel), rpcmethod_PromptLLM_(AskLLMQuestion_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+AskLLMQuestion::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_PromptLLM_(AskLLMQuestion_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status AskLLMQuestion::Stub::PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::llm_request::LLMInference* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_PromptLLM_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall< ::llm_request::LLMInit, ::llm_request::LLMInference, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_PromptLLM_, context, request, response);
 }
 
-void AskLLMQuestion::Stub::experimental_async::PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_PromptLLM_, context, request, response, std::move(f));
+void AskLLMQuestion::Stub::async::PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::llm_request::LLMInit, ::llm_request::LLMInference, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PromptLLM_, context, request, response, std::move(f));
 }
 
-void AskLLMQuestion::Stub::experimental_async::PromptLLM(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::llm_request::LLMInference* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_PromptLLM_, context, request, response, std::move(f));
-}
-
-void AskLLMQuestion::Stub::experimental_async::PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_PromptLLM_, context, request, response, reactor);
-}
-
-void AskLLMQuestion::Stub::experimental_async::PromptLLM(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::llm_request::LLMInference* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_PromptLLM_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::llm_request::LLMInference>* AskLLMQuestion::Stub::AsyncPromptLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::llm_request::LLMInference>::Create(channel_.get(), cq, rpcmethod_PromptLLM_, context, request, true);
+void AskLLMQuestion::Stub::async::PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PromptLLM_, context, request, response, reactor);
 }
 
 ::grpc::ClientAsyncResponseReader< ::llm_request::LLMInference>* AskLLMQuestion::Stub::PrepareAsyncPromptLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::llm_request::LLMInference>::Create(channel_.get(), cq, rpcmethod_PromptLLM_, context, request, false);
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::llm_request::LLMInference, ::llm_request::LLMInit, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_PromptLLM_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::llm_request::LLMInference>* AskLLMQuestion::Stub::AsyncPromptLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncPromptLLMRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 AskLLMQuestion::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       AskLLMQuestion_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< AskLLMQuestion::Service, ::llm_request::LLMInit, ::llm_request::LLMInference>(
+      new ::grpc::internal::RpcMethodHandler< AskLLMQuestion::Service, ::llm_request::LLMInit, ::llm_request::LLMInference, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](AskLLMQuestion::Service* service,
-             ::grpc_impl::ServerContext* ctx,
+             ::grpc::ServerContext* ctx,
              const ::llm_request::LLMInit* req,
              ::llm_request::LLMInference* resp) {
                return service->PromptLLM(ctx, req, resp);

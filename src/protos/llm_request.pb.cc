@@ -14,71 +14,70 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
+
+PROTOBUF_PRAGMA_INIT_SEG
+
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = _pb::internal;
+
 namespace llm_request {
-class LLMInitDefaultTypeInternal {
- public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<LLMInit> _instance;
-} _LLMInit_default_instance_;
-class LLMInferenceDefaultTypeInternal {
- public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<LLMInference> _instance;
-} _LLMInference_default_instance_;
+PROTOBUF_CONSTEXPR LLMInit::LLMInit(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.apikey_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.prompt_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct LLMInitDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR LLMInitDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~LLMInitDefaultTypeInternal() {}
+  union {
+    LLMInit _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LLMInitDefaultTypeInternal _LLMInit_default_instance_;
+PROTOBUF_CONSTEXPR LLMInference::LLMInference(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.answer_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct LLMInferenceDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR LLMInferenceDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~LLMInferenceDefaultTypeInternal() {}
+  union {
+    LLMInference _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LLMInferenceDefaultTypeInternal _LLMInference_default_instance_;
 }  // namespace llm_request
-static void InitDefaultsscc_info_LLMInference_llm_5frequest_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+static ::_pb::Metadata file_level_metadata_llm_5frequest_2eproto[2];
+static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_llm_5frequest_2eproto = nullptr;
+static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_llm_5frequest_2eproto = nullptr;
 
-  {
-    void* ptr = &::llm_request::_LLMInference_default_instance_;
-    new (ptr) ::llm_request::LLMInference();
-    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::llm_request::LLMInference::InitAsDefaultInstance();
-}
-
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_LLMInference_llm_5frequest_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_LLMInference_llm_5frequest_2eproto}, {}};
-
-static void InitDefaultsscc_info_LLMInit_llm_5frequest_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::llm_request::_LLMInit_default_instance_;
-    new (ptr) ::llm_request::LLMInit();
-    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::llm_request::LLMInit::InitAsDefaultInstance();
-}
-
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_LLMInit_llm_5frequest_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_LLMInit_llm_5frequest_2eproto}, {}};
-
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_llm_5frequest_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_llm_5frequest_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_llm_5frequest_2eproto = nullptr;
-
-const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_llm_5frequest_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+const uint32_t TableStruct_llm_5frequest_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::llm_request::LLMInit, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::llm_request::LLMInit, apikey_),
-  PROTOBUF_FIELD_OFFSET(::llm_request::LLMInit, prompt_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::llm_request::LLMInit, _impl_.apikey_),
+  PROTOBUF_FIELD_OFFSET(::llm_request::LLMInit, _impl_.prompt_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::llm_request::LLMInference, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::llm_request::LLMInference, answer_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::llm_request::LLMInference, _impl_.answer_),
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::llm_request::LLMInit)},
-  { 7, -1, sizeof(::llm_request::LLMInference)},
+static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, -1, -1, sizeof(::llm_request::LLMInit)},
+  { 8, -1, -1, sizeof(::llm_request::LLMInference)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::llm_request::_LLMInit_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::llm_request::_LLMInference_default_instance_),
+static const ::_pb::Message* const file_default_instances[] = {
+  &::llm_request::_LLMInit_default_instance_._instance,
+  &::llm_request::_LLMInference_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_llm_5frequest_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -88,154 +87,169 @@ const char descriptor_table_protodef_llm_5frequest_2eproto[] PROTOBUF_SECTION_VA
   "stion\022>\n\tPromptLLM\022\024.llm_request.LLMInit"
   "\032\031.llm_request.LLMInference\"\000b\006proto3"
   ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_llm_5frequest_2eproto_deps[1] = {
+static ::_pbi::once_flag descriptor_table_llm_5frequest_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_llm_5frequest_2eproto = {
+    false, false, 197, descriptor_table_protodef_llm_5frequest_2eproto,
+    "llm_request.proto",
+    &descriptor_table_llm_5frequest_2eproto_once, nullptr, 0, 2,
+    schemas, file_default_instances, TableStruct_llm_5frequest_2eproto::offsets,
+    file_level_metadata_llm_5frequest_2eproto, file_level_enum_descriptors_llm_5frequest_2eproto,
+    file_level_service_descriptors_llm_5frequest_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_llm_5frequest_2eproto_sccs[2] = {
-  &scc_info_LLMInference_llm_5frequest_2eproto.base,
-  &scc_info_LLMInit_llm_5frequest_2eproto.base,
-};
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_llm_5frequest_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_llm_5frequest_2eproto = {
-  false, false, descriptor_table_protodef_llm_5frequest_2eproto, "llm_request.proto", 197,
-  &descriptor_table_llm_5frequest_2eproto_once, descriptor_table_llm_5frequest_2eproto_sccs, descriptor_table_llm_5frequest_2eproto_deps, 2, 0,
-  schemas, file_default_instances, TableStruct_llm_5frequest_2eproto::offsets,
-  file_level_metadata_llm_5frequest_2eproto, 2, file_level_enum_descriptors_llm_5frequest_2eproto, file_level_service_descriptors_llm_5frequest_2eproto,
-};
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_llm_5frequest_2eproto_getter() {
+  return &descriptor_table_llm_5frequest_2eproto;
+}
 
 // Force running AddDescriptors() at dynamic initialization time.
-static bool dynamic_init_dummy_llm_5frequest_2eproto = (static_cast<void>(::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_llm_5frequest_2eproto)), true);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_llm_5frequest_2eproto(&descriptor_table_llm_5frequest_2eproto);
 namespace llm_request {
 
 // ===================================================================
 
-void LLMInit::InitAsDefaultInstance() {
-}
 class LLMInit::_Internal {
  public:
 };
 
-LLMInit::LLMInit(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+LLMInit::LLMInit(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:llm_request.LLMInit)
 }
 LLMInit::LLMInit(const LLMInit& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
+  LLMInit* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.apikey_){}
+    , decltype(_impl_.prompt_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  apikey_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.apikey_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.apikey_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (!from._internal_apikey().empty()) {
-    apikey_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_apikey(),
-      GetArena());
+    _this->_impl_.apikey_.Set(from._internal_apikey(), 
+      _this->GetArenaForAllocation());
   }
-  prompt_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.prompt_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.prompt_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (!from._internal_prompt().empty()) {
-    prompt_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_prompt(),
-      GetArena());
+    _this->_impl_.prompt_.Set(from._internal_prompt(), 
+      _this->GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:llm_request.LLMInit)
 }
 
-void LLMInit::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_LLMInit_llm_5frequest_2eproto.base);
-  apikey_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  prompt_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void LLMInit::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.apikey_){}
+    , decltype(_impl_.prompt_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.apikey_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.apikey_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.prompt_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.prompt_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 LLMInit::~LLMInit() {
   // @@protoc_insertion_point(destructor:llm_request.LLMInit)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void LLMInit::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
-  apikey_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  prompt_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void LLMInit::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.apikey_.Destroy();
+  _impl_.prompt_.Destroy();
 }
 
-void LLMInit::ArenaDtor(void* object) {
-  LLMInit* _this = reinterpret_cast< LLMInit* >(object);
-  (void)_this;
-}
-void LLMInit::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void LLMInit::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
-const LLMInit& LLMInit::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_LLMInit_llm_5frequest_2eproto.base);
-  return *internal_default_instance();
-}
-
 
 void LLMInit::Clear() {
 // @@protoc_insertion_point(message_clear_start:llm_request.LLMInit)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  apikey_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  prompt_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  _impl_.apikey_.ClearToEmpty();
+  _impl_.prompt_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* LLMInit::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* LLMInit::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    CHK_(ptr);
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // string apiKey = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_apikey();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "llm_request.LLMInit.apiKey"));
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else goto handle_unusual;
+          CHK_(::_pbi::VerifyUTF8(str, "llm_request.LLMInit.apiKey"));
+        } else
+          goto handle_unusual;
         continue;
       // string prompt = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_prompt();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "llm_request.LLMInit.prompt"));
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else goto handle_unusual;
+          CHK_(::_pbi::VerifyUTF8(str, "llm_request.LLMInit.prompt"));
+        } else
+          goto handle_unusual;
         continue;
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
+      default:
+        goto handle_unusual;
     }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
   }  // while
-success:
+message_done:
   return ptr;
 failure:
   ptr = nullptr;
-  goto success;
+  goto message_done;
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* LLMInit::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* LLMInit::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:llm_request.LLMInit)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // string apiKey = 1;
-  if (this->apikey().size() > 0) {
+  if (!this->_internal_apikey().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_apikey().data(), static_cast<int>(this->_internal_apikey().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -245,7 +259,7 @@ failure:
   }
 
   // string prompt = 2;
-  if (this->prompt().size() > 0) {
+  if (!this->_internal_prompt().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_prompt().data(), static_cast<int>(this->_internal_prompt().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -255,7 +269,7 @@ failure:
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:llm_request.LLMInit)
@@ -266,68 +280,49 @@ size_t LLMInit::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:llm_request.LLMInit)
   size_t total_size = 0;
 
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // string apiKey = 1;
-  if (this->apikey().size() > 0) {
+  if (!this->_internal_apikey().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_apikey());
   }
 
   // string prompt = 2;
-  if (this->prompt().size() > 0) {
+  if (!this->_internal_prompt().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_prompt());
   }
 
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void LLMInit::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:llm_request.LLMInit)
-  GOOGLE_DCHECK_NE(&from, this);
-  const LLMInit* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<LLMInit>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:llm_request.LLMInit)
-    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:llm_request.LLMInit)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LLMInit::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    LLMInit::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LLMInit::GetClassData() const { return &_class_data_; }
 
-void LLMInit::MergeFrom(const LLMInit& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:llm_request.LLMInit)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+
+void LLMInit::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LLMInit*>(&to_msg);
+  auto& from = static_cast<const LLMInit&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:llm_request.LLMInit)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.apikey().size() > 0) {
-    _internal_set_apikey(from._internal_apikey());
+  if (!from._internal_apikey().empty()) {
+    _this->_internal_set_apikey(from._internal_apikey());
   }
-  if (from.prompt().size() > 0) {
-    _internal_set_prompt(from._internal_prompt());
+  if (!from._internal_prompt().empty()) {
+    _this->_internal_set_prompt(from._internal_prompt());
   }
-}
-
-void LLMInit::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:llm_request.LLMInit)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void LLMInit::CopyFrom(const LLMInit& from) {
@@ -343,129 +338,145 @@ bool LLMInit::IsInitialized() const {
 
 void LLMInit::InternalSwap(LLMInit* other) {
   using std::swap;
-  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  apikey_.Swap(&other->apikey_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  prompt_.Swap(&other->prompt_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.apikey_, lhs_arena,
+      &other->_impl_.apikey_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.prompt_, lhs_arena,
+      &other->_impl_.prompt_, rhs_arena
+  );
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LLMInit::GetMetadata() const {
-  return GetMetadataStatic();
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_llm_5frequest_2eproto_getter, &descriptor_table_llm_5frequest_2eproto_once,
+      file_level_metadata_llm_5frequest_2eproto[0]);
 }
-
 
 // ===================================================================
 
-void LLMInference::InitAsDefaultInstance() {
-}
 class LLMInference::_Internal {
  public:
 };
 
-LLMInference::LLMInference(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+LLMInference::LLMInference(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:llm_request.LLMInference)
 }
 LLMInference::LLMInference(const LLMInference& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
+  LLMInference* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.answer_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  answer_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.answer_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.answer_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (!from._internal_answer().empty()) {
-    answer_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_answer(),
-      GetArena());
+    _this->_impl_.answer_.Set(from._internal_answer(), 
+      _this->GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:llm_request.LLMInference)
 }
 
-void LLMInference::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_LLMInference_llm_5frequest_2eproto.base);
-  answer_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void LLMInference::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.answer_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.answer_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.answer_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 LLMInference::~LLMInference() {
   // @@protoc_insertion_point(destructor:llm_request.LLMInference)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void LLMInference::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
-  answer_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void LLMInference::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.answer_.Destroy();
 }
 
-void LLMInference::ArenaDtor(void* object) {
-  LLMInference* _this = reinterpret_cast< LLMInference* >(object);
-  (void)_this;
-}
-void LLMInference::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void LLMInference::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
-const LLMInference& LLMInference::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_LLMInference_llm_5frequest_2eproto.base);
-  return *internal_default_instance();
-}
-
 
 void LLMInference::Clear() {
 // @@protoc_insertion_point(message_clear_start:llm_request.LLMInference)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  answer_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  _impl_.answer_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* LLMInference::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* LLMInference::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    CHK_(ptr);
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // string answer = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_answer();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "llm_request.LLMInference.answer"));
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else goto handle_unusual;
+          CHK_(::_pbi::VerifyUTF8(str, "llm_request.LLMInference.answer"));
+        } else
+          goto handle_unusual;
         continue;
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
+      default:
+        goto handle_unusual;
     }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
   }  // while
-success:
+message_done:
   return ptr;
 failure:
   ptr = nullptr;
-  goto success;
+  goto message_done;
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* LLMInference::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* LLMInference::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:llm_request.LLMInference)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // string answer = 1;
-  if (this->answer().size() > 0) {
+  if (!this->_internal_answer().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_answer().data(), static_cast<int>(this->_internal_answer().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -475,7 +486,7 @@ failure:
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:llm_request.LLMInference)
@@ -486,58 +497,39 @@ size_t LLMInference::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:llm_request.LLMInference)
   size_t total_size = 0;
 
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // string answer = 1;
-  if (this->answer().size() > 0) {
+  if (!this->_internal_answer().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_answer());
   }
 
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void LLMInference::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:llm_request.LLMInference)
-  GOOGLE_DCHECK_NE(&from, this);
-  const LLMInference* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<LLMInference>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:llm_request.LLMInference)
-    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:llm_request.LLMInference)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LLMInference::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    LLMInference::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LLMInference::GetClassData() const { return &_class_data_; }
 
-void LLMInference::MergeFrom(const LLMInference& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:llm_request.LLMInference)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+
+void LLMInference::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LLMInference*>(&to_msg);
+  auto& from = static_cast<const LLMInference&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:llm_request.LLMInference)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.answer().size() > 0) {
-    _internal_set_answer(from._internal_answer());
+  if (!from._internal_answer().empty()) {
+    _this->_internal_set_answer(from._internal_answer());
   }
-}
-
-void LLMInference::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:llm_request.LLMInference)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void LLMInference::CopyFrom(const LLMInference& from) {
@@ -553,22 +545,30 @@ bool LLMInference::IsInitialized() const {
 
 void LLMInference::InternalSwap(LLMInference* other) {
   using std::swap;
-  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  answer_.Swap(&other->answer_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.answer_, lhs_arena,
+      &other->_impl_.answer_, rhs_arena
+  );
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LLMInference::GetMetadata() const {
-  return GetMetadataStatic();
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_llm_5frequest_2eproto_getter, &descriptor_table_llm_5frequest_2eproto_once,
+      file_level_metadata_llm_5frequest_2eproto[1]);
 }
-
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace llm_request
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::llm_request::LLMInit* Arena::CreateMaybeMessage< ::llm_request::LLMInit >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::llm_request::LLMInit*
+Arena::CreateMaybeMessage< ::llm_request::LLMInit >(Arena* arena) {
   return Arena::CreateMessageInternal< ::llm_request::LLMInit >(arena);
 }
-template<> PROTOBUF_NOINLINE ::llm_request::LLMInference* Arena::CreateMaybeMessage< ::llm_request::LLMInference >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::llm_request::LLMInference*
+Arena::CreateMaybeMessage< ::llm_request::LLMInference >(Arena* arena) {
   return Arena::CreateMessageInternal< ::llm_request::LLMInference >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
