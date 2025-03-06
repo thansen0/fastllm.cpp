@@ -24,10 +24,10 @@ While this project can be used in production, it's in an early stage and may see
 You will have to build the protobuf files, and then build the actual project. There are no binaries to pull down.
 
 ```
-apt install build-essential cmake ninja-build git pkg-config libssl-dev protobuf-compiler libgrpc++-dev libprotobuf-dev libgrpc-dev protobuf-compiler-grpc
+apt install build-essential cmake ninja-build git pkg-config libcurl4-gnutls-dev protobuf-compiler libgrpc++-dev libprotobuf-dev libgrpc-dev protobuf-compiler-grpc
 apt install libabsl-dev # for GPU
 
-git submodule update --init     # clones llama.cpp
+git submodule update --init     # clone llama.cpp and jansson
 
 protoc -I=./protos --cpp_out=./protos --grpc_out=./protos --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` ./protos/llm_request.proto
 
@@ -74,7 +74,7 @@ Feel free to create issues as you see them or submit PR's. Also feel free to ema
 
 ## Donate
 
-I also appreciate donations!
+I also appreciate donations
 
 BTC Address: `3QDGJyRWiVEUyCytQBWJ5h3kVQAca8pZ1L`  
 XMR Address: `85pJmtRzE6zWhSpggKyiXHDG56FM6ydStYBRfuU4FV5Y1uCvnBwAuacRNRNkAJmAR76fzBF5QQeBiEnuaQJeiHaDF7D6xFb`

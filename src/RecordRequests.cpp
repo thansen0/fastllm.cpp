@@ -8,8 +8,8 @@
  * SPDX-FileCopyrightText: 2025 thansen0 <https://github.com/thansen0>
  * SPDX-License-Identifier: Unlicense
  */
-
 #include <stdio.h>
+#include <filesystem>
 #include <cstring>
 #include <iostream>
 #include "RecordRequests.h"
@@ -19,9 +19,16 @@
 /**************** File Write Implementation *****************/
 
 RecordRequests::RecordRequests(const std::string& filePath) {
+    std::filesystem::path path(filePath);
+    std::filesystem::path log_dir = path.parent_path();
+
+    if (!log_dir.empty()) {
+        std::filesystem::create_directories(log_dir);
+    }
+
     logFile.open(filePath);
     if (!logFile.is_open()) {
-        throw std::ios_base::failure("Failed to open log file.");
+        throw std::ios_base::failure("Failed to open log file: " + filePath);
     }
 }
 

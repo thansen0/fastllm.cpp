@@ -8,11 +8,10 @@
  * SPDX-FileCopyrightText: 2025 thansen0 <https://github.com/thansen0>
  * SPDX-License-Identifier: Unlicense
  */
-
-
 #include <stdio.h>
 #include <future>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include "llama.h"
@@ -23,6 +22,7 @@
 #include "RecordRequests.h"
 #include "APIKeyEnforcer.h"
 #include <toml++/toml.hpp>
+#include <cstdlib> // exit()
 
 #define DEBUG_MODE      false
 
@@ -55,10 +55,10 @@ private:
     APIKeyEnforcerBase *ke;
     llama_model * model;
     llama_model_params model_params;
-    int n_predict;
+    const int n_predict;
 
 public:
-    AskLLMQuestionServiceImpl(RecordRequestsBase *rr_ptr, APIKeyEnforcerBase *ke_ptr, std::string model_path, unsigned int n_predict = 24, unsigned int n_gpu_layers = 64) 
+    AskLLMQuestionServiceImpl(RecordRequestsBase *rr_ptr, APIKeyEnforcerBase *ke_ptr, std::string model_path, const unsigned int n_predict = 24, const unsigned int n_gpu_layers = 64) 
         : rr(rr_ptr), ke(ke_ptr), n_predict(n_predict)
 {
         // llama.cpp loading
@@ -376,6 +376,42 @@ static unsigned int loadConfigGPULayers(std::string config_path) {
     return config["server"]["n_gpu_layers"].value_or(64);
 }
 
+static std::pair<std::string, std::string> loadConfigTLS(std::string config_path) {
+    auto config = toml::parse_file( config_path );
+    string crt_path = config["server"]["crt_path"].value_or(""s);
+    string key_path = config["server"]["key_path"].value_or(""s);
+
+    if (crt_path.empty() || key_path.empty()) {
+        // return two empty strings if either path is emtpy
+        return {"", ""};
+    }
+
+    std::ifstream crt_file(crt_path, std::ios::in | std::ios::binary);
+    std::ifstream key_file(key_path, std::ios::in | std::ios::binary);
+
+    if (!crt_file) {
+        // user thinks they're using TLS but aren't; fatal safety error
+        cerr << "Unable to open " << crt_path << ". Exiting." << endl;
+        exit(1);
+    }
+
+    if (!key_file) {
+        // user thinks they're using TLS but aren't; fatal safety error
+        cerr << "Unable to open " << key_path << ". Exiting." << endl;
+        exit(1);
+    }
+
+    std::string crt_contents((std::istreambuf_iterator<char>(crt_file)),
+                              std::istreambuf_iterator<char>());
+    std::string key_contents((std::istreambuf_iterator<char>(key_file)),
+                              std::istreambuf_iterator<char>());
+
+    crt_file.close();
+    key_file.close();
+
+    return {crt_contents, key_contents};
+}    
+
 static RecordRequestsBase* loadConfigRecordRequests(std::string config_path) {
     auto config = toml::parse_file( config_path );
     std::string post_url = config["server"]["post_request_url"].value_or(""s);
@@ -389,20 +425,43 @@ static RecordRequestsBase* loadConfigRecordRequests(std::string config_path) {
 }
 
 void RunServer() {
-    // create logger object
+    // NOTE not a big issue, but each of these opens and closes the file, wasting
+    // io and clock cycles. The more I add, the worse this gets
     RecordRequestsBase *rr = loadConfigRecordRequests("../config/config.toml");
     APIKeyEnforcerBase *ke = loadConfigKeyEnforcer("../config/config.toml");
     std::string model_path = loadConfigModelPath("../config/config.toml");
-    unsigned int n_predict = loadConfigNPredict("../config/config.toml");
-    unsigned int n_gpu_layers = loadConfigGPULayers("../config/config.toml");
+    const unsigned int n_predict = loadConfigNPredict("../config/config.toml");
+    const unsigned int n_gpu_layers = loadConfigGPULayers("../config/config.toml");
+    const auto [pub_key, priv_key] = loadConfigTLS("../config/config.toml");
+
+    cout << "pub key:\n" << pub_key << endl;
+    cout << priv_key << endl;
 
     std::string server_address("0.0.0.0:50051");
     AskLLMQuestionServiceImpl service(rr, ke, model_path, n_predict, n_gpu_layers);
 
-    // Set up the server
     ServerBuilder builder;
-    builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    builder.RegisterService(&service);
+    grpc::SslServerCredentialsOptions ssl_opts;
+    if (priv_key.empty() || priv_key.empty()) {
+        // Set up the server
+        builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+        builder.RegisterService(&service);
+    } else {
+        // using SSL/TLS encryption
+        grpc::SslServerCredentialsOptions::PemKeyCertPair key_cert; // = {priv_key, pub_key};
+        key_cert.private_key = priv_key;
+        key_cert.cert_chain = pub_key;
+
+        ssl_opts.pem_root_certs="";
+        // ssl_opts.client_certificate_request = GRPC_SSL_DONT_REQUEST_CLIENT_CERTIFICATE;
+        ssl_opts.pem_key_cert_pairs.push_back(key_cert);
+
+        // Create SSL credentials
+        std::shared_ptr<grpc::ServerCredentials> creds = grpc::SslServerCredentials(ssl_opts);
+
+        builder.AddListeningPort(server_address, creds);
+        builder.RegisterService(&service);
+    }
 
     // Build and start the server
     std::unique_ptr<Server> server(builder.BuildAndStart());
