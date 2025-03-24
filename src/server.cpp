@@ -107,7 +107,6 @@ public:
         });
 
 
-        /**************  llama.cpp; Consider making separate function  ******************/
         // tokenize the prompt
         // find the number of tokens in the prompt
         const int n_prompt = -llama_tokenize(model, prompt.c_str(), prompt.size(), NULL, 0, true, true);
@@ -151,7 +150,7 @@ public:
         llama_sampler * smpl = llama_sampler_chain_init(sparams);
         llama_sampler_chain_add(smpl, llama_sampler_init_greedy());
 
-        // print the prompt token-by-token
+        // append the prompt token-by-token
         for (auto id : prompt_tokens) {
             char buf[128];
             int n = llama_token_to_piece(model, id, buf, sizeof(buf), 0, true);
@@ -229,10 +228,6 @@ public:
 
         llama_sampler_free(smpl);
         llama_free(ctx);
-
-        /************* End llama.cpp ********************/
-
-
 
         // Wait for the verification result
         try {
