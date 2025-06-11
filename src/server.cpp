@@ -419,6 +419,58 @@ static RecordRequestsBase* loadConfigRecordRequests(std::string config_path) {
     return new RecordRequestsREST(post_url);
 }
 
+/////////////////////////
+#include <openssl/pem.h>
+#include <openssl/x509.h>
+#include <openssl/evp.h>
+
+EVP_PKEY* pkey;
+
+std::string generate_private_key() {
+    pkey = EVP_PKEY_new();
+    RSA* rsa = RSA_generate_key(2048, RSA_F4, nullptr, nullptr);
+    EVP_PKEY_assign_RSA(pkey, rsa);
+
+    BIO* bio = BIO_new(BIO_s_mem());
+    PEM_write_bio_PrivateKey(bio, pkey, nullptr, nullptr, 0, nullptr, nullptr);
+
+    BUF_MEM* mem = nullptr;
+    BIO_get_mem_ptr(bio, &mem);
+    std::string key(mem->data, mem->length);
+
+    BIO_free(bio);
+    // EVP_PKEY_free(pkey);
+    return key;
+}
+
+std::string generate_self_signed_cert(EVP_PKEY* pkey) {
+    X509* x509 = X509_new();
+    ASN1_INTEGER_set(X509_get_serialNumber(x509), 1);
+    X509_gmtime_adj(X509_get_notBefore(x509), 0);
+    X509_gmtime_adj(X509_get_notAfter(x509), 31536000L); // 1 year
+
+    X509_set_pubkey(x509, pkey);
+
+    X509_NAME* name = X509_get_subject_name(x509);
+    X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC,
+                               (unsigned char*)"localhost", -1, -1, 0);
+    X509_set_issuer_name(x509, name);
+
+    X509_sign(x509, pkey, EVP_sha256());
+
+    BIO* bio = BIO_new(BIO_s_mem());
+    PEM_write_bio_X509(bio, x509);
+
+    BUF_MEM* mem = nullptr;
+    BIO_get_mem_ptr(bio, &mem);
+    std::string cert(mem->data, mem->length);
+
+    BIO_free(bio);
+    X509_free(x509);
+    return cert;
+}////////////////
+
+
 void RunServer() {
     // NOTE not a big issue, but each of these opens and closes the file, wasting
     // io and clock cycles. The more I add, the worse this gets
@@ -437,13 +489,33 @@ void RunServer() {
 
     ServerBuilder builder;
     grpc::SslServerCredentialsOptions ssl_opts;
-    if (priv_key.empty() || priv_key.empty()) {
+    // if (priv_key.empty() || priv_key.empty()) {
+    if (false) {
         // Set up the server
         builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
         builder.RegisterService(&service);
     } else {
+        cout << "generating keys" << endl;
+        std::string key = generate_private_key();
+        cout << "has priv key" << endl;
+        std::string cert = generate_self_signed_cert(pkey);
+        cout << "created keys" << endl;
+        EVP_PKEY_free(pkey);
+
+        grpc::SslServerCredentialsOptions::PemKeyCertPair pkcp = { key, cert };
+        grpc::SslServerCredentialsOptions ssl_opts;
+        ssl_opts.pem_key_cert_pairs.push_back(pkcp);
+
+        cout << "RUNNING IN SSL SECURE MODE" << endl << endl;
+        auto creds = grpc::SslServerCredentials(ssl_opts);
+        builder.AddListeningPort(server_address, creds);
+        builder.RegisterService(&service);
+        // Add your service here: builder.RegisterService(&your_service);
+        // builder.BuildAndStart();
+
+        // ORIG below
         // using SSL/TLS encryption
-        grpc::SslServerCredentialsOptions::PemKeyCertPair key_cert; // = {priv_key, pub_key};
+        /*grpc::SslServerCredentialsOptions::PemKeyCertPair key_cert; // = {priv_key, pub_key};
         key_cert.private_key = priv_key;
         key_cert.cert_chain = pub_key;
 
@@ -455,7 +527,7 @@ void RunServer() {
         std::shared_ptr<grpc::ServerCredentials> creds = grpc::SslServerCredentials(ssl_opts);
 
         builder.AddListeningPort(server_address, creds);
-        builder.RegisterService(&service);
+        builder.RegisterService(&service);*/
     }
 
     // Build and start the server

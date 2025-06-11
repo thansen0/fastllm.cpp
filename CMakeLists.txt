@@ -12,10 +12,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add the executable
 add_executable(fastllmcpp src/server.cpp src/RecordRequests.cpp src/APIKeyEnforcer.cpp)
 add_executable(testllmcpp src/test-client.cpp)
+add_executable(ssltestllmcpp src/ssl-test-client.cpp)
 
 # Find Protobuf and CUDA
 find_package(CURL REQUIRED)
 find_package(Protobuf REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_program(CUDA_COMPILER nvcc) # requires nvcc 11.4 or greater
 option(USE_GPU "Enable GPU processing" ON)
 
@@ -41,6 +43,7 @@ set(JANSSON_BUILD_DOCS OFF CACHE BOOL "Disable Jansson documentation" FORCE)
 # Add the generated protobuf files to the executable
 target_sources(fastllmcpp PRIVATE ${PROTO_SRCS})
 target_sources(testllmcpp PRIVATE ${PROTO_SRCS})
+target_sources(ssltestllmcpp PRIVATE ${PROTO_SRCS})
 
 include_directories(include/)
 # Add the llama.cpp library and headers
@@ -53,5 +56,6 @@ include_directories(${CURL_INCLUDE_DIR})
 message(STATUS "Protobuf_LIBRARIES: ${Protobuf_LIBRARIES}")
 
 # Link additional libraries if needed
-target_link_libraries(fastllmcpp PRIVATE llama jansson ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS} CURL::libcurl)
-target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} ${CURL_INCLUDE_DIR} grpc++ gpr pthread ${ABSL_LIBS})
+target_link_libraries(fastllmcpp PRIVATE llama jansson ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS} CURL::libcurl -lssl -lcrypto)
+target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS})
+target_link_libraries(ssltestllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS} OpenSSL::SSL OpenSSL::Crypto)
