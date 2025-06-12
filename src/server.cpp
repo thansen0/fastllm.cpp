@@ -1,7 +1,7 @@
 /* 
  *    ___         __  ____                   
  *   / __/_ ____ / /_/ / /_ _   _______  ___    C++ for Fast LLM Inference
- *  / _/ _ `(_-</ __/ / /  ' \_/ __/ _ \/ _ \   version 0.0.1
+ *  / _/ _ `(_-</ __/ / /  ' \_/ __/ _ \/ _ \   version 0.0.2
  * /_/ \_,_/___/\__/_/_/_/_/_(_)__/ .__/ .__/   https://github.com/thansen0
  *                               /_/  /_/    
  *
@@ -269,8 +269,7 @@ public:
     }
 
 
-    // ::grpc::Status StreamLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::grpc::ServerWriter< ::llm_request::LLMInference>* /*writer*/) override {
-    // Implementation of the PromptLLM RPC
+    // Implementation of the StreamLLM RPC
     Status StreamLLM(ServerContext* context, const LLMInit* request, grpc::ServerWriter<llm_request::LLMInference>* writer) override {
 
         // Access the fields in the request
@@ -370,7 +369,6 @@ public:
 
             // sample the next token
             {
-                // ADDED, checks if we've sent everything
                 if (context->IsCancelled()) {
                     break;
                 }
