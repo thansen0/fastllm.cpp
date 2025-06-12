@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add the executable
 add_executable(fastllmcpp src/server.cpp src/RecordRequests.cpp src/APIKeyEnforcer.cpp)
 add_executable(testllmcpp src/test-client.cpp)
+add_executable(teststreamllmcpp src/test-stream-client.cpp)
 
 # Find Protobuf and CUDA
 find_package(CURL REQUIRED)
@@ -41,6 +42,7 @@ set(JANSSON_BUILD_DOCS OFF CACHE BOOL "Disable Jansson documentation" FORCE)
 # Add the generated protobuf files to the executable
 target_sources(fastllmcpp PRIVATE ${PROTO_SRCS})
 target_sources(testllmcpp PRIVATE ${PROTO_SRCS})
+target_sources(teststreamllmcpp PRIVATE ${PROTO_SRCS})
 
 include_directories(include/)
 # Add the llama.cpp library and headers
@@ -54,4 +56,5 @@ message(STATUS "Protobuf_LIBRARIES: ${Protobuf_LIBRARIES}")
 
 # Link additional libraries if needed
 target_link_libraries(fastllmcpp PRIVATE llama jansson ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS} CURL::libcurl)
-target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} ${CURL_INCLUDE_DIR} grpc++ gpr pthread ${ABSL_LIBS})
+target_link_libraries(testllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc++ gpr pthread ${ABSL_LIBS})
+target_link_libraries(teststreamllmcpp PRIVATE llama ${Protobuf_LIBRARIES} grpc grpc++ gpr protobuf pthread ${ABSL_LIBS})

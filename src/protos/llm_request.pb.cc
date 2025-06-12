@@ -83,13 +83,15 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_llm_5frequest_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\021llm_request.proto\022\013llm_request\")\n\007LLMI"
   "nit\022\016\n\006apiKey\030\001 \001(\t\022\016\n\006prompt\030\002 \001(\t\"\036\n\014L"
-  "LMInference\022\016\n\006answer\030\001 \001(\t2P\n\016AskLLMQue"
-  "stion\022>\n\tPromptLLM\022\024.llm_request.LLMInit"
-  "\032\031.llm_request.LLMInference\"\000b\006proto3"
+  "LMInference\022\016\n\006answer\030\001 \001(\t2\222\001\n\016AskLLMQu"
+  "estion\022>\n\tPromptLLM\022\024.llm_request.LLMIni"
+  "t\032\031.llm_request.LLMInference\"\000\022@\n\tStream"
+  "LLM\022\024.llm_request.LLMInit\032\031.llm_request."
+  "LLMInference\"\0000\001b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_llm_5frequest_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_llm_5frequest_2eproto = {
-    false, false, 197, descriptor_table_protodef_llm_5frequest_2eproto,
+    false, false, 264, descriptor_table_protodef_llm_5frequest_2eproto,
     "llm_request.proto",
     &descriptor_table_llm_5frequest_2eproto_once, nullptr, 0, 2,
     schemas, file_default_instances, TableStruct_llm_5frequest_2eproto::offsets,

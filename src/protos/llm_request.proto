@@ -16,6 +16,7 @@ package llm_request;
 
 service AskLLMQuestion {
     rpc PromptLLM (LLMInit) returns (LLMInference) {}
+    rpc StreamLLM (LLMInit) returns (stream LLMInference) {}
 }
 
 message LLMInit {

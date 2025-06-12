@@ -55,11 +55,21 @@ class AskLLMQuestion final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::llm_request::LLMInference>> PrepareAsyncPromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::llm_request::LLMInference>>(PrepareAsyncPromptLLMRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::llm_request::LLMInference>> StreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::llm_request::LLMInference>>(StreamLLMRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::llm_request::LLMInference>> AsyncStreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::llm_request::LLMInference>>(AsyncStreamLLMRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::llm_request::LLMInference>> PrepareAsyncStreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::llm_request::LLMInference>>(PrepareAsyncStreamLLMRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
       virtual void PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, std::function<void(::grpc::Status)>) = 0;
       virtual void PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void StreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::grpc::ClientReadReactor< ::llm_request::LLMInference>* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -67,6 +77,9 @@ class AskLLMQuestion final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::llm_request::LLMInference>* AsyncPromptLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::llm_request::LLMInference>* PrepareAsyncPromptLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::llm_request::LLMInference>* StreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::llm_request::LLMInference>* AsyncStreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::llm_request::LLMInference>* PrepareAsyncStreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -78,11 +91,21 @@ class AskLLMQuestion final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::llm_request::LLMInference>> PrepareAsyncPromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::llm_request::LLMInference>>(PrepareAsyncPromptLLMRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReader< ::llm_request::LLMInference>> StreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::llm_request::LLMInference>>(StreamLLMRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::llm_request::LLMInference>> AsyncStreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::llm_request::LLMInference>>(AsyncStreamLLMRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::llm_request::LLMInference>> PrepareAsyncStreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::llm_request::LLMInference>>(PrepareAsyncStreamLLMRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
       void PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, std::function<void(::grpc::Status)>) override;
       void PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void StreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::grpc::ClientReadReactor< ::llm_request::LLMInference>* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -96,7 +119,11 @@ class AskLLMQuestion final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::llm_request::LLMInference>* AsyncPromptLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::llm_request::LLMInference>* PrepareAsyncPromptLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::llm_request::LLMInference>* StreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request) override;
+    ::grpc::ClientAsyncReader< ::llm_request::LLMInference>* AsyncStreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::llm_request::LLMInference>* PrepareAsyncStreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_PromptLLM_;
+    const ::grpc::internal::RpcMethod rpcmethod_StreamLLM_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -105,6 +132,7 @@ class AskLLMQuestion final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status PromptLLM(::grpc::ServerContext* context, const ::llm_request::LLMInit* request, ::llm_request::LLMInference* response);
+    virtual ::grpc::Status StreamLLM(::grpc::ServerContext* context, const ::llm_request::LLMInit* request, ::grpc::ServerWriter< ::llm_request::LLMInference>* writer);
   };
   template <class BaseClass>
   class WithAsyncMethod_PromptLLM : public BaseClass {
@@ -126,7 +154,27 @@ class AskLLMQuestion final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_PromptLLM<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_StreamLLM : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_StreamLLM() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_StreamLLM() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StreamLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::grpc::ServerWriter< ::llm_request::LLMInference>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStreamLLM(::grpc::ServerContext* context, ::llm_request::LLMInit* request, ::grpc::ServerAsyncWriter< ::llm_request::LLMInference>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(1, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_PromptLLM<WithAsyncMethod_StreamLLM<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_PromptLLM : public BaseClass {
    private:
@@ -154,7 +202,29 @@ class AskLLMQuestion final {
     virtual ::grpc::ServerUnaryReactor* PromptLLM(
       ::grpc::CallbackServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::llm_request::LLMInference* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_PromptLLM<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_StreamLLM : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_StreamLLM() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::llm_request::LLMInit, ::llm_request::LLMInference>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::llm_request::LLMInit* request) { return this->StreamLLM(context, request); }));
+    }
+    ~WithCallbackMethod_StreamLLM() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StreamLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::grpc::ServerWriter< ::llm_request::LLMInference>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::llm_request::LLMInference>* StreamLLM(
+      ::grpc::CallbackServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_PromptLLM<WithCallbackMethod_StreamLLM<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_PromptLLM : public BaseClass {
@@ -169,6 +239,23 @@ class AskLLMQuestion final {
     }
     // disable synchronous version of this method
     ::grpc::Status PromptLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::llm_request::LLMInference* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_StreamLLM : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_StreamLLM() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_StreamLLM() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StreamLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::grpc::ServerWriter< ::llm_request::LLMInference>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -194,6 +281,26 @@ class AskLLMQuestion final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_StreamLLM : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_StreamLLM() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_StreamLLM() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StreamLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::grpc::ServerWriter< ::llm_request::LLMInference>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStreamLLM(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(1, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_PromptLLM : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -214,6 +321,28 @@ class AskLLMQuestion final {
     }
     virtual ::grpc::ServerUnaryReactor* PromptLLM(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_StreamLLM : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_StreamLLM() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->StreamLLM(context, request); }));
+    }
+    ~WithRawCallbackMethod_StreamLLM() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StreamLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::grpc::ServerWriter< ::llm_request::LLMInference>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* StreamLLM(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_PromptLLM : public BaseClass {
@@ -243,8 +372,35 @@ class AskLLMQuestion final {
     virtual ::grpc::Status StreamedPromptLLM(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::llm_request::LLMInit,::llm_request::LLMInference>* server_unary_streamer) = 0;
   };
   typedef WithStreamedUnaryMethod_PromptLLM<Service > StreamedUnaryService;
-  typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_PromptLLM<Service > StreamedService;
+  template <class BaseClass>
+  class WithSplitStreamingMethod_StreamLLM : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithSplitStreamingMethod_StreamLLM() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::SplitServerStreamingHandler<
+          ::llm_request::LLMInit, ::llm_request::LLMInference>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerSplitStreamer<
+                     ::llm_request::LLMInit, ::llm_request::LLMInference>* streamer) {
+                       return this->StreamedStreamLLM(context,
+                         streamer);
+                  }));
+    }
+    ~WithSplitStreamingMethod_StreamLLM() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status StreamLLM(::grpc::ServerContext* /*context*/, const ::llm_request::LLMInit* /*request*/, ::grpc::ServerWriter< ::llm_request::LLMInference>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with split streamed
+    virtual ::grpc::Status StreamedStreamLLM(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::llm_request::LLMInit,::llm_request::LLMInference>* server_split_streamer) = 0;
+  };
+  typedef WithSplitStreamingMethod_StreamLLM<Service > SplitStreamedService;
+  typedef WithStreamedUnaryMethod_PromptLLM<WithSplitStreamingMethod_StreamLLM<Service > > StreamedService;
 };
 
 }  // namespace llm_request

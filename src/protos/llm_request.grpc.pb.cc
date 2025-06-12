@@ -23,6 +23,7 @@ namespace llm_request {
 
 static const char* AskLLMQuestion_method_names[] = {
   "/llm_request.AskLLMQuestion/PromptLLM",
+  "/llm_request.AskLLMQuestion/StreamLLM",
 };
 
 std::unique_ptr< AskLLMQuestion::Stub> AskLLMQuestion::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -33,6 +34,7 @@ std::unique_ptr< AskLLMQuestion::Stub> AskLLMQuestion::NewStub(const std::shared
 
 AskLLMQuestion::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_PromptLLM_(AskLLMQuestion_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StreamLLM_(AskLLMQuestion_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status AskLLMQuestion::Stub::PromptLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::llm_request::LLMInference* response) {
@@ -58,6 +60,22 @@ void AskLLMQuestion::Stub::async::PromptLLM(::grpc::ClientContext* context, cons
   return result;
 }
 
+::grpc::ClientReader< ::llm_request::LLMInference>* AskLLMQuestion::Stub::StreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request) {
+  return ::grpc::internal::ClientReaderFactory< ::llm_request::LLMInference>::Create(channel_.get(), rpcmethod_StreamLLM_, context, request);
+}
+
+void AskLLMQuestion::Stub::async::StreamLLM(::grpc::ClientContext* context, const ::llm_request::LLMInit* request, ::grpc::ClientReadReactor< ::llm_request::LLMInference>* reactor) {
+  ::grpc::internal::ClientCallbackReaderFactory< ::llm_request::LLMInference>::Create(stub_->channel_.get(), stub_->rpcmethod_StreamLLM_, context, request, reactor);
+}
+
+::grpc::ClientAsyncReader< ::llm_request::LLMInference>* AskLLMQuestion::Stub::AsyncStreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::llm_request::LLMInference>::Create(channel_.get(), cq, rpcmethod_StreamLLM_, context, request, true, tag);
+}
+
+::grpc::ClientAsyncReader< ::llm_request::LLMInference>* AskLLMQuestion::Stub::PrepareAsyncStreamLLMRaw(::grpc::ClientContext* context, const ::llm_request::LLMInit& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::llm_request::LLMInference>::Create(channel_.get(), cq, rpcmethod_StreamLLM_, context, request, false, nullptr);
+}
+
 AskLLMQuestion::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       AskLLMQuestion_method_names[0],
@@ -69,6 +87,16 @@ AskLLMQuestion::Service::Service() {
              ::llm_request::LLMInference* resp) {
                return service->PromptLLM(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      AskLLMQuestion_method_names[1],
+      ::grpc::internal::RpcMethod::SERVER_STREAMING,
+      new ::grpc::internal::ServerStreamingHandler< AskLLMQuestion::Service, ::llm_request::LLMInit, ::llm_request::LLMInference>(
+          [](AskLLMQuestion::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::llm_request::LLMInit* req,
+             ::grpc::ServerWriter<::llm_request::LLMInference>* writer) {
+               return service->StreamLLM(ctx, req, writer);
+             }, this)));
 }
 
 AskLLMQuestion::Service::~Service() {
@@ -78,6 +106,13 @@ AskLLMQuestion::Service::~Service() {
   (void) context;
   (void) request;
   (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status AskLLMQuestion::Service::StreamLLM(::grpc::ServerContext* context, const ::llm_request::LLMInit* request, ::grpc::ServerWriter< ::llm_request::LLMInference>* writer) {
+  (void) context;
+  (void) request;
+  (void) writer;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
