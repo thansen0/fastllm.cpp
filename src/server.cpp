@@ -54,6 +54,7 @@ private:
     RecordRequestsBase *rr;
     APIKeyEnforcerBase *ke;
     llama_model * model;
+    const llama_vocab * vocab;
     llama_model_params model_params;
     const int n_predict;
 
@@ -70,6 +71,9 @@ public:
         if (model == NULL) {
             fprintf(stderr , "%s: error: unable to load model\n" , __func__);
         }
+
+        vocab = llama_model_get_vocab(model);
+        // vocab = const_cast<llama_vocab*>(llama_model_get_vocab(model));
 
         if (!DEBUG_MODE) {
             // needed because llama_context_params can't disable logging
@@ -109,7 +113,7 @@ public:
 
         // tokenize the prompt
         // find the number of tokens in the prompt
-        const int n_prompt = -llama_tokenize(model, prompt.c_str(), prompt.size(), NULL, 0, true, true);
+        const int n_prompt = -llama_tokenize(vocab, prompt.c_str(), prompt.size(), NULL, 0, true, true);
         if (n_prompt < 0) {
             fprintf(stderr, "Error tokenizing prompt, n_prompt = %d\n", n_prompt);
             return Status::CANCELLED;
@@ -117,7 +121,7 @@ public:
 
         // allocate space for the tokens and tokenize the prompt
         std::vector<llama_token> prompt_tokens(n_prompt);
-        if (llama_tokenize(model, prompt.c_str(), prompt.size(), prompt_tokens.data(), prompt_tokens.size(), true, true) < 0) {
+        if (llama_tokenize(vocab, prompt.c_str(), prompt.size(), prompt_tokens.data(), prompt_tokens.size(), true, true) < 0) {
             fprintf(stderr, "%s: error: failed to tokenize the prompt\n", __func__);
             return Status::CANCELLED;
         }
@@ -153,7 +157,7 @@ public:
         // append the prompt token-by-token
         for (auto id : prompt_tokens) {
             char buf[128];
-            int n = llama_token_to_piece(model, id, buf, sizeof(buf), 0, true);
+            int n = llama_token_to_piece(vocab, id, buf, sizeof(buf), 0, true);
             if (n < 0) {
                 fprintf(stderr, "%s: error: failed to convert token to piece\n", __func__);
                 return Status::CANCELLED;
@@ -188,12 +192,12 @@ public:
                 new_token_id = llama_sampler_sample(smpl, ctx, -1);
 
                 // is it an end of generation?
-                if (llama_token_is_eog(model, new_token_id)) {
+                if (llama_token_is_eog(vocab, new_token_id)) {
                     break;
                 }
 
                 char buf[128];
-                int n = llama_token_to_piece(model, new_token_id, buf, sizeof(buf), 0, true);
+                int n = llama_token_to_piece(vocab, new_token_id, buf, sizeof(buf), 0, true);
                 if (n < 0) {
                     fprintf(stderr, "%s: error: failed to convert token to piece\n", __func__);
                     return Status::CANCELLED;
@@ -293,7 +297,7 @@ public:
 
         // tokenize the prompt
         // find the number of tokens in the prompt
-        const int n_prompt = -llama_tokenize(model, prompt.c_str(), prompt.size(), NULL, 0, true, true);
+        const int n_prompt = -llama_tokenize(vocab, prompt.c_str(), prompt.size(), NULL, 0, true, true);
         if (n_prompt < 0) {
             fprintf(stderr, "Error tokenizing prompt, n_prompt = %d\n", n_prompt);
             return Status::CANCELLED;
@@ -301,7 +305,7 @@ public:
 
         // allocate space for the tokens and tokenize the prompt
         std::vector<llama_token> prompt_tokens(n_prompt);
-        if (llama_tokenize(model, prompt.c_str(), prompt.size(), prompt_tokens.data(), prompt_tokens.size(), true, true) < 0) {
+        if (llama_tokenize(vocab, prompt.c_str(), prompt.size(), prompt_tokens.data(), prompt_tokens.size(), true, true) < 0) {
             fprintf(stderr, "%s: error: failed to tokenize the prompt\n", __func__);
             return Status::CANCELLED;
         }
@@ -337,7 +341,7 @@ public:
         // append the prompt token-by-token
         for (auto id : prompt_tokens) {
             char buf[128];
-            int n = llama_token_to_piece(model, id, buf, sizeof(buf), 0, true);
+            int n = llama_token_to_piece(vocab, id, buf, sizeof(buf), 0, true);
             if (n < 0) {
                 fprintf(stderr, "%s: error: failed to convert token to piece\n", __func__);
                 return Status::CANCELLED;
@@ -376,12 +380,12 @@ public:
                 new_token_id = llama_sampler_sample(smpl, ctx, -1);
 
                 // is it an end of generation?
-                if (llama_token_is_eog(model, new_token_id)) {
+                if (llama_token_is_eog(vocab, new_token_id)) {
                     break;
                 }
 
                 char buf[128];
-                int n = llama_token_to_piece(model, new_token_id, buf, sizeof(buf), 0, true);
+                int n = llama_token_to_piece(vocab, new_token_id, buf, sizeof(buf), 0, true);
                 if (n < 0) {
                     fprintf(stderr, "%s: error: failed to convert token to piece\n", __func__);
                     return Status::CANCELLED;
@@ -422,44 +426,6 @@ public:
 
         llama_sampler_free(smpl);
         llama_free(ctx);
-
-        // Wait for the verification result
-        /*try {
-            bool isVerified = verificationFuture.get(); // blocking call
-            if (isVerified) {
-                // record prompt and generated output
-                std::thread logRequestThread([this, prompt, generated_output, api_key]() {
-                    this->rr->recordLLMRequest(prompt, generated_output, api_key);
-                });
-                // this function may not complete if the program is cancelled
-                logRequestThread.detach();
-
-                // Join the thread to clean up
-                verificationThread.join();
-
-                // Set the response
-                reply->set_answer(generated_output);
-
-                if (DEBUG_MODE)
-                    std::cout << "gRPC LLM inference being returned." << std::endl;
-                return Status::OK;
-            } else {
-                if (DEBUG_MODE)
-                    std::cerr << "User verification failed." << std::endl;
-                verificationThread.join();
-
-                return grpc::Status(grpc::StatusCode::PERMISSION_DENIED, "Unrecognized API key.");
-            }
-        } catch (const std::exception& ex) {
-            if (DEBUG_MODE)
-                std::cerr << "Error during verification: " << ex.what() << std::endl;
-
-            if (verificationThread.joinable()) {
-                verificationThread.join();
-            }
-
-            return grpc::Status(grpc::StatusCode::PERMISSION_DENIED, "Error during verification.");
-        }*/
 
         // spawn logging (detached) now that we have the full output
         std::thread([this, prompt, generated_output, api_key]() {
