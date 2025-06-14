@@ -66,7 +66,7 @@ public:
         model_params = llama_model_default_params();
         model_params.n_gpu_layers = n_gpu_layers; // number of layers to offload to the GPU
 
-        model = llama_load_model_from_file(model_path.c_str(), model_params);
+        model = llama_model_load_from_file(model_path.c_str(), model_params);
 
         if (model == NULL) {
             fprintf(stderr , "%s: error: unable to load model\n" , __func__);
@@ -82,7 +82,7 @@ public:
     }
 
     ~AskLLMQuestionServiceImpl() {
-        llama_free_model(model);
+        llama_model_free(model);
 
         // save any new keys to the toml file
         writeConfigKeyEnforcer("../config/config.toml", ke);
@@ -140,7 +140,7 @@ public:
         ctx_params.no_perf = false;
 
 
-        llama_context * ctx = llama_new_context_with_model(model, ctx_params);
+        llama_context * ctx = llama_init_from_model(model, ctx_params);
 
         if (ctx == NULL) {
             if (DEBUG_MODE)
@@ -192,7 +192,7 @@ public:
                 new_token_id = llama_sampler_sample(smpl, ctx, -1);
 
                 // is it an end of generation?
-                if (llama_token_is_eog(vocab, new_token_id)) {
+                if (llama_vocab_is_eog(vocab, new_token_id)) {
                     break;
                 }
 
@@ -324,7 +324,7 @@ public:
         ctx_params.no_perf = false;
 
 
-        llama_context * ctx = llama_new_context_with_model(model, ctx_params);
+        llama_context * ctx = llama_init_from_model(model, ctx_params);
 
         if (ctx == NULL) {
             if (DEBUG_MODE)
@@ -380,7 +380,7 @@ public:
                 new_token_id = llama_sampler_sample(smpl, ctx, -1);
 
                 // is it an end of generation?
-                if (llama_token_is_eog(vocab, new_token_id)) {
+                if (llama_vocab_is_eog(vocab, new_token_id)) {
                     break;
                 }
 
